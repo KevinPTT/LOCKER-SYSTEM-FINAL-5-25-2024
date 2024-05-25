@@ -1,0 +1,118 @@
+.mat-dialog-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 16px;
+}
+
+.record {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  overflow-y: auto;
+  max-height: 400px; 
+  padding: 20px; 
+}
+
+.record {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  overflow-y: auto; 
+  max-height: 600px; 
+  width: 100%; 
+  margin: 0 auto; 
+  padding: 20px; 
+}
+
+
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 12px;
+  border: 1px solid #ccc;
+  text-align: left;
+}
+
+th {
+  background-color: #f5f5f5;
+}
+
+/* Responsive styles */
+@media screen and (max-width: 768px) {
+  .mat-dialog-title {
+    font-size: 20px;
+  }
+
+  .record {
+    padding: 15px; 
+  }
+
+  th, td {
+    padding: 10px; 
+  }
+}
+
+.hidden-input {
+  opacity: 0; /* itago pero mananatili sa DOM */
+  position: absolute; /* ilagay sa isang hindi kitaang lugar */
+  top: -9999px; /* ilagay sa labas ng viewable area */
+  left: -9999px; /* ilagay sa labas ng viewable area */
+}
+
+// Example SCSS code for setting color based on status
+// Sa taas ng iyong SCSS file
+$green: #00FF00; // Hexadecimal value for green
+
+// Paggamit ng $green variable
+.locker-info {
+  color: $green; // Set text color to green for 'Available'
+}
+.locker-info {
+  color: green; // Set text color to green for 'Available'
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.button-group button {
+  margin: 10px;
+}
+
+.input-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.input-field {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.expand-button {
+  margin-top: 10px;
+}
+
+
+// .locker.occupied {
+//   background-color: red; 
+// }
+
+// .locker.available {
+//   background-color: green; 
+// }
+
+// .locker.unavailable {
+//   background-color: black; 
+// }

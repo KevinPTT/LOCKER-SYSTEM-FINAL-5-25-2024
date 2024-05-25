@@ -1,0 +1,75 @@
+<mat-sidenav-container class="sidebar-container">
+  <mat-sidenav #drawer class="sidebar" fixedInViewport="false"
+    [attr.role]="isHandset$ ? 'dialog' : 'navigation'"
+    [mode]="(isHandset$ | async) ? 'over' : 'side'"
+    [opened]="!(isHandset$ | async)">
+    <mat-nav-list>
+    <div class="wrapper">
+      <div class="sidebar">
+        <div class="profile profile-section">
+          <img src="../assets/images/GCLMS.PNG">
+          <h3>{{ userName }}</h3>
+          <p class="profile-name">{{ userRole === 'admin' ? 'ADMIN' : 'SUPERADMIN' }}</p>
+        </div>
+        <!-- Other sidebar content here -->
+        <ul>
+          <li [routerLinkActive]="'active'" [routerLinkActiveOptions]="{ exact: true }">
+            <a routerLink="./dashboard" routerLinkActive="active-link">
+              <div class="item-content">
+                <mat-icon>dashboard</mat-icon>
+                <span class="text">DASHBOARD</span>
+              </div>
+            </a>
+          <li>
+
+            <li [routerLinkActive]="'active'" [routerLinkActiveOptions]="{ exact: true }">
+              <a routerLink="./locker" routerLinkActive="active-link">
+                <div class="item-content">
+                  <mat-icon>lock</mat-icon>
+                  <span class="text">LOCKERS</span>
+                </div>
+              </a>
+          </li>
+          
+          <li [routerLinkActive]="'active'" [routerLinkActiveOptions]="{ exact: true }">
+            <a routerLink="./report" routerLinkActive="active-link">
+              <div class="item-content">
+                <mat-icon>description</mat-icon>
+                <span class="text">REPORTS</span>
+              </div>
+            </a>
+          </li>
+
+          <li [routerLinkActive]="'active'" [routerLinkActiveOptions]="{ exact: true }">
+            <a routerLink="./history" routerLinkActive="active-link">
+              <div class="item-content">
+                <mat-icon>history</mat-icon>
+                <span class="text">HISTORY</span>
+              </div>
+            </a>
+          </li>
+          <div class="logout-icon-container">
+            <button mat-icon-button (click)="logout()">
+              <mat-icon>logout</mat-icon>
+            </button>
+          </div>
+        </ul>
+      </div>
+    </div>
+  </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <mat-toolbar color="primary">
+      <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()" class="toggle-button">
+        <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+      </button>
+      <span>GCLIM-LOCKER SYSTEM</span>
+      <div class="spacer"></div> <!-- Add a spacer for alignment -->
+      <span class="datetime">
+        <mat-icon>calendar_today</mat-icon> {{ getCurrentDateTime() }}
+      </span> <!-- Display current date and time with datetime class -->
+    </mat-toolbar>    
+    <router-outlet></router-outlet> <!-- Main content including the dashboard -->
+  </mat-sidenav-content>
+</mat-sidenav-container>

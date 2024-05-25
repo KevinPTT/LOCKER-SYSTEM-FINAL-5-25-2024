@@ -1,0 +1,77 @@
+<section id="content">
+  <main>
+    <div class="head-title">
+      <h1>REPORT</h1>
+    </div>
+    <h1 class="subtext">REPORT <i class="bx bxs-report"></i></h1>
+    <div class="additional-content">
+      <!-- Additional content can be added here -->
+    </div>
+    <!-- Buttons for Gender and Department using Angular Material -->
+  </main>
+  <hr>
+  <div class="button-container">
+    <button mat-button (click)="loadGenderChart()" [class.active]="activeTab === 'gender'">Gender</button>
+    <button mat-button (click)="loadDepartmentChart()" [class.active]="activeTab === 'department'">Department</button>
+  </div>
+
+<!-- Hamburger menu -->
+<div class="parent-container">
+  <div class="menu-container">
+    <button mat-icon-button [matMenuTriggerFor]="menu" class="menu-button">
+      <mat-icon>cloud_download</mat-icon>
+    </button>
+    <span class="download-text">Download</span>
+
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item [disabled]="isProgramChartVisible" (click)="downloadPDF()">
+        <mat-icon>picture_as_pdf</mat-icon> Download PDF
+      </button>
+      <button mat-menu-item (click)="downloadFile('png')">
+        <mat-icon>image</mat-icon> Download PNG
+      </button>
+      <button mat-menu-item (click)="downloadFile('svg')">
+        <mat-icon>image</mat-icon> Download SVG
+      </button>
+    </mat-menu>
+  </div>
+</div>
+
+
+ <div class="hamburger-menu-container" *ngIf="activeTab === 'department'">
+  <div class="menu-container">
+    <button mat-icon-button [matMenuTriggerFor]="departmentMenu" class="menu-button">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <mat-menu #departmentMenu="matMenu">
+      <button mat-menu-item (click)="filterDepartment('CEAS')">CEAS</button>
+      <button mat-menu-item (click)="filterDepartment('CHTM')">CHTM</button>
+      <button mat-menu-item (click)="filterDepartment('CBA')">CBA</button>
+      <button mat-menu-item (click)="filterDepartment('CAHS')">CAHS</button>
+      <button mat-menu-item (click)="filterDepartment('CCS')">CCS</button>
+    </mat-menu>
+  </div>
+</div>
+
+<!-- <div>
+  <select [(ngModel)]="filterBy" (change)="onFilterChange()">
+    <option value="today">Today</option>
+    <option value="weeks">Weeks</option>
+    <option value="month">Month</option>
+  </select>
+</div> -->
+
+
+
+  <!-- Graphs Section -->
+  <div class="chartsBx">
+    <div class="chart">
+      <canvas #chart1 class="chart-canvas"></canvas>
+    </div>
+    <div class="chart">
+      <canvas #chart2 class="chart-canvas"></canvas>
+    </div>
+    <!-- <canvas id="ceas-programs-chart"></canvas> -->
+
+  </div>
+</section>

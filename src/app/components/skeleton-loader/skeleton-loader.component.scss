@@ -1,0 +1,135 @@
+// .skeleton-loader {
+//   display: flex;
+//   flex-direction: column;
+// }
+
+.skeleton-block {
+  height: 20px; /* Ayusin ang taas ayon sa kailangan */
+  width: 100%;
+  background-color: #f0f0f0; /* Kulay na light gray */
+  margin-bottom: 10px; /* Ayusin ang puwang sa pagitan ng mga blocks */
+  animation: skeleton-animation 1s infinite alternate; /* Halimbawang animation */
+}
+
+@keyframes skeleton-animation {
+  from { opacity: 0.5; }
+  to { opacity: 1; }
+}
+
+
+/* SkeletonLoaderComponent Styles */
+.skeleton-loader {
+  /* Replicate locker component styles */
+  // background-color: #ffffff; /* White background */
+  padding: 20px;
+  border-radius: 8px;
+  // box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.head-title h1 {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.subtext {
+  font-size: 18px;
+  color: #333333; /* Dark gray color */
+  margin-bottom: 20px;
+}
+
+.additional-content {
+  /* Placeholder content styles */
+  height: 100px;
+  background-color: #f0f0f0; /* Light gray background */
+  margin-bottom: 20px;
+}
+
+.flex-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.flex-box {
+  width: calc(20% - 10px); /* Adjust width based on your design */
+  height: 100px; /* Adjust height based on your design */
+  background-color: #f0f0f0; /* Light gray background */
+  margin-right: 10px; /* Adjust spacing between flex boxes */
+}
+
+.skeleton-loader-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 10px; /* Adjust as needed */
+}
+
+.skeleton-loader-box {
+  width: calc(20% - 10px); /* Adjust width and gap */
+  height: 100px; /* Adjust height */
+  background-color: #f0f0f0; /* Skeleton color */
+  border-radius: 3px;
+  animation: skeleton-pulse 1.5s infinite alternate; /* Animation for pulse effect */
+}
+
+@keyframes skeleton-pulse {
+  from {
+    opacity: 0.6;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+
+/* Assuming you have a class named skeleton-loader-box for your skeleton loader boxes */
+.skeleton-loader-box {
+  background-color: #f0f0f0; /* Background color of the loader boxes */
+  border-radius: 4px; /* Rounded corners for the boxes */
+  animation: shimmer 2s infinite linear; /* Apply the shimmer animation */
+
+  /* Other styles for the loader box */
+  height: 100px;
+  width: 100px;
+  margin: 10px;
+}
+
+/* Keyframes for the shimmer animation */
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0; /* Initial background position */
+  }
+  100% {
+    background-position: 200px 0; /* Final background position */
+  }
+}
+
+
+.skeleton-loader {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.skeleton-box {
+  width: 100px; /* Adjust width as needed */
+  height: 131px; /* Adjust height as needed */
+  background-color: #f0f0f0; /* Light gray background */
+  margin: 10px; /* Adjust margin as needed */
+  border-radius: 5px; /* Rounded corners */
+  animation: skeleton-pulse 1s infinite alternate; /* Animation effect */
+  justify-content: center;
+}
+
+@keyframes skeleton-pulse {
+  0% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+
+
+

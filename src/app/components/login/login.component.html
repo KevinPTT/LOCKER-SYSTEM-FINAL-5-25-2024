@@ -1,0 +1,38 @@
+<body class="login-container">
+  <div class="container">
+    <div class="forms-container">
+      <div class="signin-signup">
+        <form class="sign-in-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+          <h2 class="title">
+            <img src="../assets/images/logo.png" alt="Gordon College Logo" class="logo" /><br />
+            <span class="upper-text">Gordon College</span><br />
+            <span class="lower-text">Library Management System</span><br />
+            <span class="lower-text">Locker</span>
+          </h2>
+          <div class="input-field">
+            <i class="fas fa-user"></i>
+            <input type="text" placeholder="Username" formControlName="email" />
+          </div>
+          <div class="input-field">
+            <i class="fas fa-lock"></i>
+            <input type="password" placeholder="Password" formControlName="password" />
+          </div>
+          <button type="submit" class="btn solid" [disabled]="loading" (click)="login()">
+            <span *ngIf="!loading">Login</span>
+            <span *ngIf="loading">
+              <i class="fas fa-spinner fa-spin"></i> Logging in...
+            </span>
+          </button>
+          <p class="social-text">GCLIM {{ version }}</p>
+        </form>
+      </div>
+    </div>
+    <div class="panels-container">
+      <div class="panel left-panel">
+        <div class="content">
+        </div>
+        <img src="../assets/images/vector.png" class="image" alt="" />
+      </div>
+    </div>
+  </div>
+</body>

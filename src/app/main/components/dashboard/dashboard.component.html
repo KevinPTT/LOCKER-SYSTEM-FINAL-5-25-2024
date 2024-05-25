@@ -1,0 +1,93 @@
+<section id="content">
+  <main>
+    <div class="head-title">
+      <h1>DASHBOARD</h1>
+    </div>
+    <h1 class="subtext">DASHBOARD<i class='bx bxs-dashboard'></i>
+    </h1>
+    <!-- Additional content within the main section -->
+    <div class="additional-content">
+      <!-- Add your additional content here -->
+    </div>
+    <hr>
+    <ul class="box-info">
+      <li>
+        <i class="bx bx-user" [ngClass]="{ 'bx-toggle-right': totalUsers > 0, 'bxs-check-circle': totalUsers === 0 }"
+          (click)="toggleFilterMenu()"></i>
+        <span class="text">
+          <div class="filter-icon" (click)="toggleFilterMenu()">
+            <i class="fas fa-filter"></i>
+          </div>
+          <div class="filter-menu" [ngClass]="{ 'open': filterMenuOpen }">
+            <select *ngIf="filterMenuOpen" class="form-select" aria-label="Filter by time frame"
+              [(ngModel)]="selectedFilter">
+              <option value="all">All Time</option>
+              <option value="today">Today</option>
+              <option value="week">This Week</option>
+              <option value="month">This Month</option>
+            </select>
+          </div>
+          <h3>{{ selectedFilter === 'today' ? todayUsers : selectedFilter === 'week' ? thisWeekUsers : selectedFilter
+            === 'month' ? thisMonthUsers : totalUsers }}</h3>
+          <p>TOTAL USERS</p>
+        </span>
+      </li>
+      <!-- Other <li> elements here -->
+      <!-- Other <li> elements here -->
+      <li>
+        <i class="bx bx-lock-alt"
+          [ngClass]="{ 'bx-lock': unavailableCount > 0, 'bxs-check-circle': unavailableCount === 0 }"></i>
+        <span class="text">
+          <h3>{{ totalLockers }}</h3>
+          <p>TOTAL OF LOCKERS</p>
+        </span>
+      </li>
+      <!-- Other <li> elements here -->
+      <li>
+        <i class="bx bx-lock-open" [ngClass]="{ 'bx-lock': availableCount > 0, '': availableCount === 0 }"></i>
+        <span class="text">
+          <h3>{{ availableCount }}</h3>
+          <p>AVAILABLE</p>
+        </span>
+      </li>
+
+      <li>
+        <i class="bx bx-lock" [ngClass]="{ 'bx-lock': occupiedCount > 0, 'bxs-check-circle': occupiedCount === 0 }"></i>
+        <span class="text">
+          <h3>{{ occupiedCount }}</h3>
+          <p>OCCUPIED</p>
+        </span>
+      </li>
+      <li>
+        <i class="bx bx-error"
+          [ngClass]="{ 'bx-error-alt': unavailableCount > 0, 'bxs-check-circle': unavailableCount === 0 }"></i>
+        <span class="text">
+          <h3>{{ unavailableCount }}</h3>
+          <p>UNAVAILABLE</p>
+        </span>
+      </li>
+    </ul>
+    <div class="table-data">
+      <div class="order">
+        <div class="head">
+          <h3>DEPARTMENT</h3>
+        </div>
+        <div class="chartsBx">
+          <div class="chart">
+            <canvas #chartDepartment class="chart-canvas"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="todo">
+        <div class="head">
+          <h3>GENDER</h3>
+        </div>
+        <div class="chartsBx">
+          <div class="chart">
+            <canvas #chartGender class="chart-canvas"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</section>

@@ -1,0 +1,483 @@
+
+
+:host {
+	--poppins: 'Poppins', sans-serif;
+	--lato: 'Lato', sans-serif;
+	--light: #F9F9F9;
+	--blue: #3C91E6;
+	--light-blue: #CFE8FF;
+	--grey: #eee;
+	--dark-grey: #AAAAAA;
+	--dark: #342E37;
+	--red: #DB504A;
+	--yellow: #FFCE26;
+	--light-yellow: #FFF2C6;
+	--orange: #FD7238;
+	--light-orange: #FFE0D3;
+}
+
+:host {
+  --h1-font-size: 4rem;
+  --hr-margin: -39px 244px;
+  --hr-margin-mobile: 0 22px;
+}
+
+h1 {
+  font-size: var(--h1-font-size);
+}
+
+hr {
+  border: none;
+  height: 2px;
+  background-color: #ccc;
+  margin: var(--hr-margin);
+}
+
+body {
+	margin: 0;
+	padding: 0;
+	font-family: var(--poppins), sans-serif;
+	background-color: #eee;
+}
+
+hr {
+	border: none;
+	height: 1px;
+	background-color: #ccc;
+	margin: -39px 24px; /* Adjust the margin as needed */
+	margin-right: 22px;
+  background-color: rgba(0, 0, 0, 0.8);
+  opacity: 0.3;
+}
+
+
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 10px; /* Adjust padding as needed */
+}
+
+.head-title {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex-grow: 1; /* Expand to fill remaining space */
+  margin-bottom: 2%;
+}
+
+h1 {
+  font-size: 5rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--dark);
+  opacity: 0.1;
+  z-index: -1;
+  margin-top: 3%;
+  margin-right: 35px;
+
+}
+
+.dashboard-line {
+  position: sticky;
+  top: 40px; /* Adjust top position as needed */
+  z-index: 999; /* Adjust z-index as needed */
+}
+
+
+@media only screen and (max-width: 768px) {
+  hr {
+    margin: var(--hr-margin-mobile); /* Use the variable for mobile margin */
+  }
+}
+
+h1 {
+  z-index: 0;
+}
+
+.dashboard-line {
+  z-index: 2; /* Increase the z-index for the dashboard line */
+}
+
+h1 {
+  bottom: 76vh;
+  position: absolute;
+  top: 94px;
+}
+
+@media only screen and (max-width: 768px) {
+  .header-container {
+    flex-direction: column; /* Change to column or column-reverse based on your design */
+    align-items: flex-start;
+  }
+
+  .head-title {
+    justify-content: flex-end; /* Keep the head-title content aligned to the right */
+    margin-top: 20px; /* Add margin to separate it from the line */
+  }
+
+  hr {
+    margin: var(--hr-margin-mobile); /* Use the variable for mobile margin */
+  }
+
+  h1 {
+    font-size: 2rem; /* Decrease font size for smaller screens */
+  }
+}
+
+hr {
+  margin: 20px 0;
+}
+
+hr {
+  z-index: 1; 
+}
+
+@media only screen and (max-width: 768px) {
+  hr {
+    margin: 10px 0; /* I-adjust ang margin para sa mobile view */
+  }
+}
+
+hr {
+  // margin: 98px 36px 30px; 
+  margin: 105px 36px 30px;
+  z-index: 1;
+}
+
+@media only screen and (max-width: 768px) {
+  hr {
+    margin: 10px 0; 
+  }
+}
+
+/* Media queries for responsive design */
+
+@media only screen and (max-width: 768px) {
+  .header-container {
+    flex-direction: column-reverse; /* Change to column-reverse to move head-title to the bottom */
+    align-items: flex-start;
+  }
+
+  .head-title {
+    justify-content: flex-end; /* Keep the head-title content aligned to the right */
+    margin-top: 20px; /* Add margin to separate it from the line */
+  }
+
+  hr {
+    margin: 59px 25px 9px;; /* Adjust the margin for smaller screens */
+  }
+
+  h1 {
+    font-size: 2rem; /* Decrease font size for smaller screens */
+  }
+}
+
+
+@media only screen and (max-width: 996px) {
+  .header-container {
+    flex-direction: column-reverse; /* Change to column-reverse to move head-title to the bottom */
+    align-items: flex-start;
+  }
+
+  .head-title {
+    justify-content: flex-end; /* Keep the head-title content aligned to the right */
+    margin-top: 20px; /* Add margin to separate it from the line */
+  }
+
+  hr {
+    margin: 59px 25px 9px;; /* Adjust the margin for smaller screens */
+  }
+
+  h1 {
+    font-size: 2rem; /* Decrease font size for smaller screens */
+  }
+}
+
+@media only screen and (max-width: 1300px) {
+  .header-container {
+    flex-direction: column-reverse; /* Change to column-reverse to move head-title to the bottom */
+    align-items: flex-start;
+  }
+
+  .head-title {
+    justify-content: flex-end; /* Keep the head-title content aligned to the right */
+    margin-top: 20px; /* Add margin to separate it from the line */
+  }
+
+  hr {
+    margin: 73px 25px 9px;; /* Adjust the margin for smaller screens */
+  }
+
+  // h1 {
+  //   font-size: 2rem; /* Decrease font size for smaller screens */
+  // }
+}
+
+
+@media screen and (max-width: 768px) {
+  .head-title h1 {
+    display: none; /* Hide the main title on small screens */
+  }
+
+  .subtext {
+    display: inline-block; /* Display the subtext with icon */
+  }
+}
+
+/* Styles for subtext */
+.subtext {
+  font-size: 1.8rem; 
+  color: #31A463;
+  font-family: var(--poppins), sans-serif; 
+  margin-bottom: 24px; 
+  font-weight: 600;
+  opacity: 1;
+  margin-left: 37px;
+  z-index: -1;
+}
+
+/* Styles for icon */
+.material-icons {
+  font-size: 20px; 
+  color: #333; 
+  margin-left: 5px; 
+}
+
+
+
+//NEW CONTENT - CONTAINER
+
+
+.flex-container{
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start
+}
+.flex-box{
+  width: 100px;
+  height: 100px;
+  color: white;
+  font-size: 97px;
+  text-align: center;
+  line-height: 75px;
+  border-radius: 3px;
+  margin: 10px;
+  overflow: hidden;
+  box-shadow: 6px 0 6px #0000004d !important;
+  transition: transform 0.3s ease;
+  position: relative;
+  cursor: pointer;
+}
+
+.flex-box img {
+  width: 100%;
+  height: 103%;
+  transition: transform 0.3s ease;
+}
+
+.flex-box:hover img {
+  transform: scale(1.1);
+}
+
+
+.flex-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center; 
+
+  .flex-box {
+    margin: 11px; 
+    height: 150px; 
+    align-self: flex-start; 
+    }
+  }
+
+
+
+
+.flex-box:hover {
+  transform: scale(1.1);
+}
+
+.flex-box img {
+  width: 100%;
+  height: 103%;
+}
+
+
+
+.box-number {
+  position: absolute;
+  top: 32vh;
+  left: 3%;
+  transform: translateX(-50%);
+  background-color: #fff;
+  color: #000;
+  font-size: 10px;
+  padding: 2px 6px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-weight: bold;
+}
+
+
+
+//INDICATOR
+
+
+
+.indicator-box {
+  width: 20px; 
+  height: 20px; 
+  border-radius: 23%;
+  margin-right: 73px; 
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  white-space: nowrap;
+}
+
+.indicator-text {
+  font-size: 14px; 
+  margin-left: 24px;
+}
+
+
+.indicator-container {
+  display: flex;
+  align-items: center;
+  margin-top: 10px; 
+  padding: 1px 30px 16px;
+}
+
+
+
+.indicator-text {
+  font-size: 14px;
+}
+
+/* Kulay ng mga indicator boxes */
+.occupied {
+  background-color: red; 
+}
+
+.available {
+  background-color: #afe585;
+}
+
+.unavailable {
+  background-color: black; 
+}
+
+.mat-raised-button {
+  background-color: #31A463;
+  color: #31A463;
+}
+
+//LOADING ANIMATION
+
+
+.flex-box img .locker.occupied {
+  background-color: red; 
+}
+
+.locker.available {
+  background-color: green; 
+}
+
+.locker.unavailable {
+  background-color: black;
+}
+
+
+.locker-number {
+  position: absolute;
+  top: -23px;
+  left: 3px;
+  // background-color: rgba(255, 255, 255, 0.8);
+  padding: 5px;
+  border-radius: 5px;
+  font-size: 10px;
+  font-family: var(--poppins);
+  font-weight: bold;
+}
+
+
+
+
+/* Desktop styles */
+.sort-container {
+  display: flex;
+  margin-top: 10px; 
+  padding: 1px 5px 16px;
+  height: 20px; 
+  border-radius: 23%;
+  margin-right: 73px; 
+  align-items: center;
+  justify-content: flex-start;
+  white-space: nowrap;
+
+
+  position: absolute;
+  right: -30px;
+  top: 28%;
+  display: flex;
+}
+
+.sort-label {
+  font-size: 16px;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+.select-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.select-wrapper select {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 150px;
+}
+
+.select-wrapper i {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  font-size: 18px;
+  color: #666;
+}
+
+/* Tablet styles (max-width: 768px) */
+@media only screen and (max-width: 768px) {
+ .sort-container {
+    right: 30px;
+    top: 20%;
+  }
+ .select-wrapper select {
+    width: 120px;
+  }
+}
+
+/* Mobile styles (max-width: 480px) */
+@media only screen and (max-width: 480px) {
+ .sort-container {
+    right: 15px;
+    top: 15%;
+  }
+ .select-wrapper select {
+    width: 90px;
+  }
+ .sort-label {
+    font-size: 14px;
+  }
+}
+

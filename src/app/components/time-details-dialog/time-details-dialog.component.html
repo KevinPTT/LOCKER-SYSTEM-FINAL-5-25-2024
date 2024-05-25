@@ -1,0 +1,22 @@
+<div class="record">
+    <h2 mat-dialog-title>TIME DETAILS</h2>
+    <table class="table">
+      <tr>
+        <th>Date In</th>
+        <td>{{ data.timeIn | date: 'MM/dd/yyyy' }}</td>
+      </tr>
+      <tr>
+        <th>Time In</th>
+        <td>{{ data.timeIn | date: 'h:mm:ss a z' }}</td>
+      </tr>
+      <tr>
+        <th>Date Out</th>
+        <td>{{ data.timeOut | date: 'MM/dd/yyyy' }}</td>
+      </tr>
+      <tr>
+        <th>Time Out</th>
+        <td>{{ data.timeOut | date: 'h:mm:ss a z' }}</td>
+      </tr>
+      <!-- Add more rows for other time details -->
+    </table>
+  </div>

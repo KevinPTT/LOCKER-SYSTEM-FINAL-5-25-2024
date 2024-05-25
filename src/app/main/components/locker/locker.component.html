@@ -1,0 +1,63 @@
+<section id="content">
+  <main>
+    <!-- Actual content here -->
+    <div class="head-title">
+      <h1>LOCKER</h1>
+    </div>
+    <h1 class="subtext">LOCKER <i class='bx bxs-lock'></i></h1>
+    <!-- Additional content within the main section -->
+    <div class="additional-content">
+      <!-- Add your additional content here -->
+    </div>
+  </main>
+  <hr>
+  <div class="indicator-container">
+      <!-- Sorting dropdown -->
+  <div class="sort-container">
+    <label for="sort-by" class="sort-label">Sort by:</label>
+    <div class="select-wrapper">
+      <select [(ngModel)]="selectedSort" (change)="applySort(selectedSort)">
+        <option value="all">All</option>
+        <option value="available">Available</option>
+        <option value="occupied">Occupied</option>
+        <option value="unavailable">Unavailable / Damages</option>
+      </select>
+    </div>
+  </div>
+    <div class="indicator-box occupied">
+      <span class="indicator-text">Occupied</span>
+    </div>
+    <div class="indicator-box available">
+      <span class="indicator-text">Available</span>
+    </div>
+    <div class="indicator-box unavailable">
+      <span class="indicator-text">Unavailable / Damages</span>
+    </div>
+  </div>
+
+
+
+  <!-- Use *ngIf to switch between skeleton loader and content -->
+  <div *ngIf="isLoading; else contentTemplate">
+    <app-skeleton-loader [isLoading]="isLoading"></app-skeleton-loader>
+  </div>
+
+  <!-- Flex-boxes for lockers -->
+  <ng-template #contentTemplate>
+    <div class="flex-container">
+      <!-- Use *ngIf to display "No locker found" message when no lockers -->
+      <div *ngIf="filteredLockers.length === 0" class="no-locker-message">
+        <img src="../assets/images/not-found.png" alt="No locker found" style="width: 200px; height: 200px; margin-bottom: 10px;">
+        <h2>No locker found</h2>
+        <p style="color: red; font-size: 18px; margin-left: -20px;">Please check back later.</p>
+        <!-- You can add more content or styling for the no locker message here -->
+      </div>
+
+      <!-- Flex-boxes for lockers -->
+      <div class="flex-box" *ngFor="let locker of filteredLockers" (click)="openPopup(locker.Id)">
+        <div class="locker-number">{{ locker.lockerNumber }}</div>
+        <img [src]="getLockerImage(locker.status)" alt="">
+      </div>
+    </div>
+  </ng-template>
+</section>
