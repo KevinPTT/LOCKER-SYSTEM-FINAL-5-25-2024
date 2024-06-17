@@ -15,6 +15,8 @@ import autoTable from 'jspdf-autotable';
 import { UserOptions } from 'jspdf-autotable';
 import html2canvas from 'html2canvas';
 import 'jspdf-autotable';
+import Swal from 'sweetalert2';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-report',
@@ -22,7 +24,6 @@ import 'jspdf-autotable';
   styleUrls: ['./report.component.scss']
 })
 export class ReportComponent implements AfterViewInit, OnDestroy {
-  filterBy: 'days' | 'weeks' | 'months' = 'days';
   chartData: any = {}; // Define chartData property
   getGenderChartData(): any {
     throw new Error('Method not implemented.');
@@ -34,7 +35,8 @@ export class ReportComponent implements AfterViewInit, OnDestroy {
   activeTab: 'gender' | 'department' = 'gender'; // Default active tab
   @ViewChild('chart1') chart1!: ElementRef;
   @ViewChild('chart2') chart2!: ElementRef;
-  
+  filterBy: string = 'all';
+  selectedFilter: string = 'all';
   maleCount: number = 0;
   femaleCount: number = 0;
   ceasCount = 0;
@@ -42,9 +44,6 @@ export class ReportComponent implements AfterViewInit, OnDestroy {
   cbaCount = 0;
   cahsCount = 0;
   ccsCount = 0;
-
-
-
   bacommCount = 0;
   bcaedCount = 0;
   becedCount = 0;
@@ -71,10 +70,9 @@ export class ReportComponent implements AfterViewInit, OnDestroy {
   bsitCount = 0;
   bsemcCount = 0;
   actCount = 0;
- 
   isProgramChartVisible = false;
-
-
+  activeFilter: string = 'all';
+  genderCounts: any = { maleCount: 0, femaleCount: 0 };
   ceasPrograms: any[] = []; // Initialize as an empty array
   ceasProgramCounts: any = {}; // Initialize ceasProgramCounts
   chtmProgramCounts: any = {};
@@ -83,22 +81,37 @@ export class ReportComponent implements AfterViewInit, OnDestroy {
   ccsProgramCounts: any = {};
   chart1Instance: Chart<"pie"> | undefined;
   chart2Instance: Chart<"bar"> | undefined;
+  isLoading: boolean = false; // Add isLoading property
+  showApplyButton: boolean = false; // Define showApplyButton property
+  showDateFilter: boolean = false;
+  fromDate: Date | null = null;
+  toDate: Date | null = null;
 
-  constructor(private lockerApiService: LockerApiService, private snackBar: MatSnackBar,) { }
+
+  showDepartmentDateFilter: boolean = false;
+  departmentFromDate: string | null = null;
+  departmentToDate: string | null = null;
+
+
+  
+  
+  constructor(private lockerApiService: LockerApiService, private snackBar: MatSnackBar, private cdRef: ChangeDetectorRef) { }
   
 
+  
   ngAfterViewInit(): void {
+
     const storedTab = sessionStorage.getItem('activeTab');
     if (storedTab === 'department') {
       this.activeTab = 'department';
-      this.loadDepartmentChart(); // Tawagin ang loadDepartmentChart() kapag active ang department tab
+      this.loadDepartmentChart();
     } else {
       this.activeTab = 'gender'; 
-      this.loadGenderChart();
     }
   
     if (this.activeTab === 'gender') {
       this.updateGenderCharts();
+      
     } else {
       this.updateDepartmentCharts();
     }
@@ -106,22 +119,21 @@ export class ReportComponent implements AfterViewInit, OnDestroy {
   
   changeTab(tab: 'gender' | 'department'): void {
     this.activeTab = tab;
-    sessionStorage.setItem('activeTab', tab);
   
-    if (tab === 'gender') {
-      this.loadGenderChart();
+    // Rest ng iyong existing logic
+    if (this.activeTab === 'gender') {
       this.updateGenderCharts();
     } else {
       this.loadDepartmentChart();
       this.updateDepartmentCharts();
     }
   
-    if (tab !== 'gender' && this.activeTab !== 'gender') {
-      this.isProgramChartVisible = false; // Set flag to false when navigating away from program chart and active tab is not gender
-    }
+    // I-set ang isProgramChartVisible base sa value ng activeTab
+    this.isProgramChartVisible = this.activeTab !== 'gender';
   }
-
-
+  
+  
+  
   downloadFile(fileType: string): void {
     this.selectedFileType = fileType;
     
@@ -298,57 +310,60 @@ downloadSVG(): void {
 
 downloadPDF(): void {
   if (!this.isProgramChartVisible) {
-    // Generate PDF code here
     const currentDate = new Date();
     const formattedDate = `${currentDate.toLocaleDateString()} ${currentDate.toLocaleTimeString()}`;
-  
-  const pdf = new jsPDF();
-  const headerImg = new Image();
-  headerImg.src = '../assets/images/GC.png'; // Replace 'path/to/your/header.png' with the actual path of your header image
+    const pdf = new jsPDF();
+    
+    const headerImg = new Image();
+    headerImg.src = '../assets/images/GC.png'; // Adjust path if necessary
 
-  const newLogo = new Image();
-  newLogo.src = '../assets/images/library-logo.png'; // Replace 'path/to/your/new-logo.png' with the actual path of your new logo
+    const newLogo = new Image();
+    newLogo.src = '../assets/images/library-logo.png'; // Adjust path if necessary
 
-  headerImg.onload = () => {
-    pdf.addImage(headerImg, 'PNG', 20, 6, 30, 30);
-    pdf.addImage(newLogo, 'PNG', pdf.internal.pageSize.getWidth() - 20 - 27, 6, 26, 26); // Add new logo to the right side
+    headerImg.onload = () => {
+      pdf.addImage(headerImg, 'PNG', 20, 6, 30, 30);
+      pdf.addImage(newLogo, 'PNG', pdf.internal.pageSize.getWidth() - 47, 6, 26, 26);
 
-    pdf.setFont('helvetica');
-    pdf.setFontSize(10);
-    pdf.setTextColor(0, 0, 0);
+      pdf.setFont('helvetica');
+      pdf.setFontSize(10);
+      pdf.setTextColor(0, 0, 0);
 
-    // Add the current date and time to the header
-    pdf.text(`As of: ${formattedDate}`, 83, 50);
+      pdf.text(`As of: ${formattedDate}`, 83, 45);
 
-    pdf.text('Republic of the Philippines', pdf.internal.pageSize.getWidth() / 2, 15, { align: 'center' });
-    pdf.text('City of Olongapo', pdf.internal.pageSize.getWidth() / 2, 20, { align: 'center' });
+      pdf.text('Republic of the Philippines', pdf.internal.pageSize.getWidth() / 2, 15, { align: 'center' });
+      pdf.text('City of Olongapo', pdf.internal.pageSize.getWidth() / 2, 20, { align: 'center' });
 
-    pdf.setFont('helvetica', 'bold');
-    pdf.text('GORDON COLLEGE', pdf.internal.pageSize.getWidth() / 2, 25, { align: 'center' });
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('GORDON COLLEGE', pdf.internal.pageSize.getWidth() / 2, 25, { align: 'center' });
 
-    pdf.setFont('helvetica', 'normal');
-    pdf.text('Olongapo City Sports Complex, Donor St, East Tapinac, Olongapo City', pdf.internal.pageSize.getWidth() / 2, 30, { align: 'center' });
-    pdf.text('Tel. No:(047) 224-2089 loc. 401', pdf.internal.pageSize.getWidth() / 2, 35, { align: 'center' });
+      pdf.setFont('helvetica', 'normal');
+      pdf.text('Olongapo City Sports Complex, Donor St, East Tapinac, Olongapo City', pdf.internal.pageSize.getWidth() / 2, 30, { align: 'center' });
+      pdf.text('Tel. No:(047) 224-2089 loc. 401', pdf.internal.pageSize.getWidth() / 2, 35, { align: 'center' });
 
-    pdf.setFont('helvetica', 'bold');
+      pdf.setFont('helvetica', 'bold');
 
-    if (this.activeTab === 'gender') {
-      pdf.text('GENDER SUMMARY', pdf.internal.pageSize.getWidth() / 2, 45, { align: 'center' });
+      if (this.activeTab === 'gender') {
+        pdf.text('GENDER SUMMARY', pdf.internal.pageSize.getWidth() / 2, 55, { align: 'center' });
 
-      const genderTableData = [
-        ['Gender', 'Count', 'Percentage'],
-        ['Male', this.maleCount.toString(), `${((this.maleCount / (this.maleCount + this.femaleCount)) * 100).toFixed(2)}%`],
-        ['Female', this.femaleCount.toString(), `${((this.femaleCount / (this.maleCount + this.femaleCount)) * 100).toFixed(2)}%`],
-      ];
+        const totalGenderCount = this.genderCounts.maleCount + this.genderCounts.femaleCount;
+        const genderTableData = [
+          ['Gender', 'Count', 'Percentage'],
+          ['Male', this.genderCounts.maleCount.toString(), totalGenderCount > 0 ? `${((this.genderCounts.maleCount / totalGenderCount) * 100).toFixed(2)}%` : '0%'],
+          ['Female', this.genderCounts.femaleCount.toString(), totalGenderCount > 0 ? `${((this.genderCounts.femaleCount / totalGenderCount) * 100).toFixed(2)}%` : '0%'],
+        ];
+
+        console.log('Gender Table Data:', genderTableData);
+
 
       autoTable(pdf, {
         head: genderTableData.slice(0, 1),
         body: genderTableData.slice(1),
         startY: 58,
         margin: { left: 20, right: 20 },
+        headStyles: { fillColor: [0, 128, 0] } // Set the header color to green
       });
     } else {
-      pdf.text('DEPARTMENT SUMMARY', pdf.internal.pageSize.getWidth() / 2, 50, { align: 'center' });
+      pdf.text('DEPARTMENT SUMMARY', pdf.internal.pageSize.getWidth() / 2, 55, { align: 'center' });
 
       const departmentTableData = [
         ['Department', 'Count', 'Percentage'],
@@ -362,8 +377,9 @@ downloadPDF(): void {
       autoTable(pdf, {
         head: departmentTableData.slice(0, 1),
         body: departmentTableData.slice(1),
-        startY: 100,
+        startY: 60,
         margin: { left: 20, right: 20 },
+        headStyles: { fillColor: [0, 128, 0] } // Set the header color to green
       });
 
       const totalProgramCount =
@@ -429,6 +445,8 @@ downloadPDF(): void {
           head: programTableData.slice(0, 1),
           body: programTableData.slice(1),
           margin: { left: 20, right: 20 },
+          headStyles: { fillColor: [0, 128, 0] } // Set the header color to green
+
         });
     }
 
@@ -439,206 +457,320 @@ downloadPDF(): void {
 }
 
 
-  ngOnDestroy(): void {
-    // Ensure to destroy the charts when the component is destroyed
-    if (this.chart1Instance) {
-      this.chart1Instance.destroy();
-    }
-    if (this.chart2Instance) {
-      this.chart2Instance.destroy();
-    }
+ngOnDestroy(): void {
+  if (this.chart1Instance) {
+    this.chart1Instance.destroy();
+  }
+  if (this.chart2Instance) {
+    this.chart2Instance.destroy();
+  }
+}
+
+
+loadGenderChart(period: string): void {
+  this.isLoading = true; // Show loading spinner
+  const params: any = { period };
+
+  if (period === 'custom' && this.fromDate && this.toDate) {
+    params.from_date = this.fromDate;
+    params.to_date = this.toDate;
   }
 
-  loadGenderChart(): void {
-    this.lockerApiService.getGenderCounts().subscribe(
-      (counts: any) => {
-        this.maleCount = counts.maleCount;
-        this.femaleCount = counts.femaleCount;
-        this.updateGenderCharts();
-        this.activeTab = 'gender'; // Set active tab
-      },
-      (error: any) => {
-        console.error('Error fetching gender counts:', error);
-      }
-    );
-  }
-
-  loadDepartmentChart(): void {
-    console.log('counts')
-    this.lockerApiService.getDepartmentCounts().subscribe(
-      (counts: any) => {
-        if (counts && counts.CEAS && counts.CEAS.departmentCount !== undefined) {
-          this.ceasCount = counts.CEAS.departmentCount;
-          this.ceasProgramCounts = counts.CEAS.programCounts;
-        }
-        if (counts && counts.CHTM && counts.CHTM.departmentCount !== undefined) {
-          this.chtmCount = counts.CHTM.departmentCount;
-          this.chtmProgramCounts = counts.CHTM.programCounts;
-        }
-        if (counts && counts.CBA && counts.CBA.departmentCount !== undefined) {
-          this.cbaCount = counts.CBA.departmentCount;
-          this.cbaProgramCounts = counts.CBA.programCounts;
-        }
-        if (counts && counts.CAHS && counts.CAHS.departmentCount !== undefined) {
-          this.cahsCount = counts.CAHS.departmentCount;
-          this.cahsProgramCounts = counts.CAHS.programCounts;
-        }
-        if (counts && counts.CCS && counts.CCS.departmentCount !== undefined) {
-          this.ccsCount = counts.CCS.departmentCount;
-          this.ccsProgramCounts = counts.CCS.programCounts;
-          console.log(this.ccsProgramCounts.BSIT)
-        }
-        this.updateDepartmentCharts();
-        this.activeTab = 'department'; // Set active tab
-      },
-      (error: any) => {
-        console.error('Error fetching college counts:', error);
-      }
-    );
-  }
-  
-
-
-  
-  updateGenderCharts(): void {
-    // Set the isProgramChartVisible flag to false before updating the charts
-    this.isProgramChartVisible = false;
-
-    if (this.activeTab === 'gender') {
-      if (this.chart1Instance) {
-        this.chart1Instance.destroy();
-      }
-      if (this.chart2Instance) {
-        this.chart2Instance.destroy();
-      }
-
-      const ctx1 = this.chart1.nativeElement.getContext('2d');
-      const chart1Data = [this.maleCount, this.femaleCount];
-      const chart1Labels = ['Male', 'Female'];
-      const total = chart1Data.reduce((a, b) => a + b, 0);
-      this.chart1Instance = new Chart<'pie'>(ctx1, {
-        type: 'pie',
-        data: {
-          labels: chart1Labels,
-          datasets: [
-            {
-              label: '# of using locker',
-              data: chart1Data,
-              backgroundColor: ['rgba(54, 162, 235, 1)', 'rgba(255, 99, 132, 1)'],
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            tooltip: {
-              callbacks: {
-                label: (tooltipItem: TooltipItem<'pie'>): string[] => {
-                  const currentValue = tooltipItem.dataIndex === 0 ? this.maleCount : this.femaleCount;
-                  const percentage = ((currentValue / total) * 100).toFixed(2);
-                  return [`${currentValue} (${percentage}%)`];
-                },
-              },
-            },
-          },
-          scales: {
-            x: {
-              display: false, // Hide x-axis for pie chart
-            },
-            y: {
-              display: false, // Hide y-axis for pie chart
-            },
-          },
-        },
-      });
-
-      const ctx2 = this.chart2.nativeElement.getContext('2d');
-      const chart2Data = [this.maleCount, this.femaleCount];
-      const chart2Labels = ['Male', 'Female'];
-      this.chart2Instance = new Chart<'bar'>(ctx2, {
-        type: 'bar',
-        data: {
-          labels: chart2Labels,
-          datasets: [
-            {
-              label: '# of using locker',
-              data: chart2Data,
-              backgroundColor: ['rgba(54, 162, 235, 1)', 'rgba(255, 99, 132, 1)'],
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            x: {
-              display: true,
-              title: {
-                display: true,
-                text: 'Gender',
-              },
-            },
-            y: {
-              display: true,
-              title: {
-                display: true,
-                text: 'Count',
-              },
-              beginAtZero: true,
-            },
-          },
-          plugins: {
-            tooltip: {
-              callbacks: {
-                label: (tooltipItem: TooltipItem<'bar'>): string[] => {
-                  const currentValue = tooltipItem.dataIndex === 0 ? this.maleCount : this.femaleCount;
-                  const percentage = ((currentValue / total) * 100).toFixed(2);
-                  return [`${currentValue} (${percentage}%) of ${total}`];
-                },
-              },
-            },
-            legend: {
-              display: false,
-            },
-          },
-        },
+  this.lockerApiService.getGenderCounts(params).subscribe(
+    (response: any) => {
+      console.log('Received gender counts:', response);
+      this.genderCounts = response;
+      this.updateGenderCharts();
+      this.isLoading = false;
+    },
+    (error: any) => {
+      console.error('Error fetching gender counts:', error);
+      this.isLoading = false;
+      Swal.fire({
+        icon: 'error',
+        title: 'Error!',
+        text: 'Failed to load gender chart data!',
+        timer: 2000,
+        showConfirmButton: false
       });
     }
+  );
+}
+
+ngOnInit() {
+  this.applyFilter('all');
+}
+
+onFilterChange(event: any): void {
+  this.applyFilter(event.value);
+}
+
+toggleDateFilter(): void {
+  this.showDateFilter = !this.showDateFilter;
+}
+
+checkDateInputs(): void {
+  if (this.fromDate && this.toDate) {
+    this.applyFilter('custom');
+  }
+}
+
+applyDateFilter(): void {
+  if (this.showApplyButton) {
+    this.applyFilter('custom');
+  }
+}
+
+applyFilter(filterBy: string = 'all'): void {
+  this.activeFilter = filterBy;
+  this.isLoading = true;
+
+  const params: any = { period: filterBy };
+  if (filterBy === 'custom' && this.fromDate && this.toDate) {
+    params.from_date = this.fromDate;
+    params.to_date = this.toDate;
   }
 
-///dito start sa program aayusin
+  console.log('Request parameters:', params);
 
+  this.lockerApiService.getGenderCounts(params).subscribe(
+    (data: any) => {
+      console.log('Received gender counts:', data);
+      this.genderCounts = data;
+      this.loadGenderChart(this.activeFilter);
+      this.isLoading = false;
+    },
+    (error: any) => {
+      console.error('Error fetching gender counts:', error);
+      this.isLoading = false;
+      Swal.fire({
+        icon: 'error',
+        title: 'Error!',
+        text: 'Failed to load gender chart data!',
+        timer: 2000,
+        showConfirmButton: false
+      });
+    }
+  );
+}
 
+clearDateFilter(): void {
+  this.fromDate = null;
+  this.toDate = null;
+  this.showApplyButton = false;
+  this.applyFilter('all');
+}
 
+updateGenderCharts(): void {
+  // Ensure gender counts are numbers
+  const maleCount = this.genderCounts.maleCount || 0;
+  const femaleCount = this.genderCounts.femaleCount || 0;
+  const total = maleCount + femaleCount;
 
+  console.log('Male Count:', maleCount, 'Female Count:', femaleCount, 'Total:', total);
 
- fetchProgramCounts(department: string): Observable<any> {
-  return new Observable((observer) => {
-    this.lockerApiService.  getDepartmentCounts().subscribe(
-      (collegeCounts: any) => {
-        const departmentProgramCounts = collegeCounts[department]?.programCounts;
-        if (departmentProgramCounts && typeof departmentProgramCounts === 'object') {
-          const programCountsArray = Object.keys(departmentProgramCounts).map((programLabel: string) => ({
-            label: programLabel,
-            count: departmentProgramCounts[programLabel],
-          }));
-          observer.next(programCountsArray); 
-          observer.complete(); 
-        } else {
-          console.error('Invalid program counts data format:', departmentProgramCounts);
-          observer.error('Invalid program counts data format');
-        }
+  // Calculate percentages
+  const malePercentage = total > 0 ? (maleCount / total) * 100 : 0;
+  const femalePercentage = total > 0 ? (femaleCount / total) * 100 : 0;
+
+  console.log('Male Percentage:', malePercentage.toFixed(2), 'Female Percentage:', femalePercentage.toFixed(2));
+
+  // Update Pie Chart
+  const ctx1 = this.chart1.nativeElement.getContext('2d');
+  if (this.chart1Instance) {
+    this.chart1Instance.destroy();
+  }
+  this.chart1Instance = new Chart<'pie'>(ctx1, {
+    type: 'pie',
+    data: {
+      labels: ['Male', 'Female'],
+      datasets: [
+        {
+          data: [maleCount, femaleCount],
+          backgroundColor: ['rgba(54, 162, 235, 1)', 'rgba(255, 99, 132, 1)'],
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: (tooltipItem: TooltipItem<'pie'>): string[] => {
+              const currentValue = tooltipItem.raw as number;
+              const percentage = ((currentValue / total) * 100).toFixed(2);
+              return [`${currentValue} (${percentage}%)`];
+            },
+          },
+        },
       },
-      (error: any) => {
-        console.error('Error fetching program counts:', error);
-        observer.error(error); 
-      }
-    );
+    },
+  });
+
+  // Update Bar Chart
+  const ctx2 = this.chart2.nativeElement.getContext('2d');
+  if (this.chart2Instance) {
+    this.chart2Instance.destroy();
+  }
+  this.chart2Instance = new Chart<'bar'>(ctx2, {
+    type: 'bar',
+    data: {
+      labels: ['Male', 'Female'],
+      datasets: [
+        {
+          label: '# of using locker',
+          data: [maleCount, femaleCount],
+          backgroundColor: ['rgba(54, 162, 235, 1)', 'rgba(255, 99, 132, 1)'],
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: {
+          display: true,
+          title: {
+            display: true,
+            text: 'Gender',
+          },
+        },
+        y: {
+          display: true,
+          title: {
+            display: true,
+            text: 'Count',
+          },
+          beginAtZero: true,
+        },
+      },
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: (tooltipItem: TooltipItem<'bar'>): string[] => {
+              const currentValue = tooltipItem.raw as number;
+              const percentage = ((currentValue / total) * 100).toFixed(2);
+              return [`${currentValue} (${percentage}%) of ${total}`];
+            },
+          },
+        },
+        legend: {
+          display: false,
+        },
+      },
+    },
   });
 }
 
+
+
 //DEPARTMENT CHART
+applyDepartmentFilter(filterBy: string = 'all'): void {
+  this.isLoading = true;
+
+  const params: any = { period: filterBy };
+  if (filterBy === 'custom' && this.departmentFromDate && this.departmentToDate) {
+    params.from_date = this.departmentFromDate;
+    params.to_date = this.departmentToDate;
+  }
+
+  console.log('Request parameters for department:', params);
+
+  this.lockerApiService.getDepartmentCounts(params).subscribe(
+    (counts: any) => {
+      console.log('API Response:', counts); // Log the API response
+      this.updateCounts(counts);
+      this.isLoading = false;
+    },
+    (error: any) => {
+      console.error('Error fetching department counts:', error);
+      this.isLoading = false;
+      Swal.fire({
+        icon: 'error',
+        title: 'Error!',
+        text: 'Failed to load department chart data!',
+        timer: 2000,
+        showConfirmButton: false
+      });
+    }
+  );
+}
+updateCounts(counts: any): void {
+  console.log('Updating counts with data:', counts); // Add logging here to verify counts
+  this.ceasCount = counts.CEAS?.departmentCount ?? 0;
+  this.ceasProgramCounts = counts.CEAS?.programCounts ?? {};
+
+  this.chtmCount = counts.CHTM?.departmentCount ?? 0;
+  this.chtmProgramCounts = counts.CHTM?.programCounts ?? {};
+
+  this.cbaCount = counts.CBA?.departmentCount ?? 0;
+  this.cbaProgramCounts = counts.CBA?.programCounts ?? {};
+
+  this.cahsCount = counts.CAHS?.departmentCount ?? 0;
+  this.cahsProgramCounts = counts.CAHS?.programCounts ?? {};
+
+  this.ccsCount = counts.CCS?.departmentCount ?? 0;
+  this.ccsProgramCounts = counts.CCS?.programCounts ?? {};
+
+  this.updateDepartmentCharts();
+}
+
+
+
+
+toggleDepartmentDateFilter(): void {
+  this.showDepartmentDateFilter = !this.showDepartmentDateFilter;
+}
+
+checkDepartmentDateInputs(): void {
+  if (this.departmentFromDate && this.departmentToDate) {
+    this.applyDepartmentFilter('custom');
+  }
+}
+
+clearDepartmentDateFilter(): void {
+  this.departmentFromDate = null;
+  this.departmentToDate = null;
+  this.applyDepartmentFilter('all');
+}
+
+
+
+loadDepartmentChart(): void {
+  console.log('counts')
+  this.lockerApiService.getDepartmentCounts().subscribe(
+    (counts: any) => {
+      if (counts && counts.CEAS && counts.CEAS.departmentCount !== undefined) {
+        this.ceasCount = counts.CEAS.departmentCount;
+        this.ceasProgramCounts = counts.CEAS.programCounts;
+      }
+      if (counts && counts.CHTM && counts.CHTM.departmentCount !== undefined) {
+        this.chtmCount = counts.CHTM.departmentCount;
+        this.chtmProgramCounts = counts.CHTM.programCounts;
+      }
+      if (counts && counts.CBA && counts.CBA.departmentCount !== undefined) {
+        this.cbaCount = counts.CBA.departmentCount;
+        this.cbaProgramCounts = counts.CBA.programCounts;
+      }
+      if (counts && counts.CAHS && counts.CAHS.departmentCount !== undefined) {
+        this.cahsCount = counts.CAHS.departmentCount;
+        this.cahsProgramCounts = counts.CAHS.programCounts;
+      }
+      if (counts && counts.CCS && counts.CCS.departmentCount !== undefined) {
+        this.ccsCount = counts.CCS.departmentCount;
+        this.ccsProgramCounts = counts.CCS.programCounts;
+        console.log(this.ccsProgramCounts.BSIT)
+      }
+      this.updateDepartmentCharts();
+      this.activeTab = 'department'; // Set active tab
+    },
+    (error: any) => {
+      console.error('Error fetching college counts:', error);
+    }
+  );
+}
+
 updateDepartmentCharts(): void {
   // Destroy existing chart instances if they exist
   this.isProgramChartVisible = false;
@@ -853,6 +985,36 @@ updatePieChart(department: string, programCounts: any[]): void {
 }
 
 
+
+///dito start sa program aayusin
+
+
+
+fetchProgramCounts(department: string): Observable<any> {
+  return new Observable((observer) => {
+    this.lockerApiService.getDepartmentCounts().subscribe(
+      (collegeCounts: any) => {
+        const departmentProgramCounts = collegeCounts[department]?.programCounts;
+        if (departmentProgramCounts && typeof departmentProgramCounts === 'object') {
+          const programCountsArray = Object.keys(departmentProgramCounts).map((programLabel: string) => ({
+            label: programLabel,
+            count: departmentProgramCounts[programLabel],
+          }));
+          observer.next(programCountsArray);
+          observer.complete();
+        } else {
+          console.error('Invalid program counts data format:', departmentProgramCounts);
+          observer.error('Invalid program counts data format');
+        }
+      },
+      (error: any) => {
+        console.error('Error fetching program counts:', error);
+        observer.error(error);
+      }
+    );
+  });
+}
+
 generateColorsForDepartments(departments: string[]): string[] {
   const colors = [];
   for (let i = 0; i < departments.length; i++) {
@@ -930,6 +1092,8 @@ updateCAHSProgramsChart(): void {
     },
   });
 }
+
+
 
 updateCCSProgramsChart(): void {
   if (this.chart2Instance) {

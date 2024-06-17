@@ -1,0 +1,47 @@
+<main>
+    <div class="container">
+        <div class="content">
+            <div class="details-content">
+                <div class="detailsheader">
+                    <h1> History</h1>
+                </div>
+                <div class="detailsbody">
+                    <div class="details">
+                        <div class="txt_field1">
+                            <!-- <div class="labelline1">Date</div>
+                            <span></span>
+
+                            <input type="date" class="date"> -->
+                        </div>
+                        <div class="table1">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Action</th>
+                                        <th>Date & Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let log of lockerLogs">
+                                        <td>{{ log.user.first_name }} {{ log.user.last_name }}</td>
+                                        <td>{{ log.log }}</td>
+                                        <td>{{ log.created_at | date:'MM/dd/yyyy hh:mm a'}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <!-- <div class="pagination">
+                                <button (click)="previousPage()" [disabled]="currentPage === 1">Previous</button>
+                                <span>{{ currentPage }}</span>
+                                <button (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
+                              </div> -->
+                            <div class="button-container">
+                                <button  (click)="closepopup()" class="cancel-btn">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

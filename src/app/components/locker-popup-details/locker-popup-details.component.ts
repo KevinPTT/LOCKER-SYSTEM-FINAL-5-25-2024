@@ -1,13 +1,23 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, ViewChild, ElementRef, AfterViewInit, OnInit, OnDestroy } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { LockerApiService } from 'src/app/locker-services/locker-api.service';
 import Swal from 'sweetalert2';
 
+interface ErrorResponse {
+  error: {
+    error: string;
+    occupiedLocker?: string;
+  };
+}
+
+function isErrorResponse(error: any): error is ErrorResponse {
+  return error && typeof error === 'object' && 'error' in error;
+}
 
 interface Locker {
   contents: any;
   Id: number;
-  lockerNumber: string;
+  locker_number: string;
   status: string;
   studentNumber: string;
   full_program: string;
@@ -16,31 +26,32 @@ interface Locker {
     first_name: string;
     last_name: string;
     program: {
-      program: string;
-      department: {
-        department: string;
+      program_short: string;
+      department_short: {
+        department_short: string;
         full_department: string;
       };
     };
-    gender: string;
-    id: number; // Add id property
-  } | null; // Allow user property to be nullable
+    gender: number;
+    id: number;
+  } | null;
 }
-
 
 @Component({
   selector: 'app-locker-popup-details',
   templateUrl: './locker-popup-details.component.html',
   styleUrls: ['./locker-popup-details.component.scss']
 })
+export class LockerPopupDetailsComponent implements AfterViewInit, OnInit, OnDestroy {
+  @ViewChild('barcodeInput') barcodeInput!: ElementRef;
 
-export class LockerPopupDetailsComponent {
   lockerInfo: Locker;
   barcodeValue: string = '';
   typingTimer: any;
-  studentNumber: string = ''; // Add studentNumber property
+  studentNumber: string = '';
   isExpanded: boolean = false;
-  isEditing = false;
+  isLoading: boolean = false;
+  isUnavailableState: boolean = false;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -48,88 +59,178 @@ export class LockerPopupDetailsComponent {
   ) {
     const storedLockerInfo = localStorage.getItem('lockerInfo');
     this.lockerInfo = storedLockerInfo ? JSON.parse(storedLockerInfo) : data.locker;
-    this.barcodeValue = ''; // Clear barcodeValue after successful scan
+    this.barcodeValue = '';
   }
 
-toggleExpand(): void {
-  this.isExpanded =!this.isExpanded;
-}
+  anotherAction(): void {
+    console.log('Another action clicked!');
+  }
+
+  yetAnotherAction(): void {
+    console.log('Yet another action clicked!');
+  }
+
+  remarkText: string = '';
+  showRemarkInput: boolean = false;
+
+  // remark(): void {
+  //   this.showRemarkInput = true;
+  //   this.setLockerUnavailable();
+  //   // Optionally, call an API to update the backend status
+  //   this.updateLockerStatus('Unavailable');
+  // }
+
+  saveRemark(): void {
+    console.log('Saving remark:', this.remarkText);
+    this.showRemarkInput = false;
+  }
+
+  setLockerUnavailable(): void {
+    this.lockerInfo.status = 'Unavailable';
+    this.isUnavailableState = true;
+  }
+
+  // updateLockerStatus(status: string): void {
+  //   this.lockerApiService.updateLockerStatus(this.lockerInfo.Id, status).subscribe(
+  //     (response: any) => {
+  //       console.log('Locker status updated:', response);
+  //     },
+  //     (error: any) => {
+  //       console.error('Error updating locker status:', error);
+  //     }
+  //   );
+  // }
 
   ngOnInit(): void {
     this.fetchLockerInformation();
+    document.body.addEventListener('click', this.handleBodyClick.bind(this));
+  }
+
+  ngAfterViewInit(): void {
+    this.focusBarcodeInput();
+  }
+
+  ngOnDestroy(): void {
+    document.body.removeEventListener('click', this.handleBodyClick.bind(this));
+  }
+
+  handleBodyClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    if (!this.isExpanded) {
+      this.focusBarcodeInput();
+    }
+  }
+
+  focusBarcodeInput(): void {
+    if (this.barcodeInput) {
+      this.barcodeInput.nativeElement.focus();
+    }
+  }
+
+  getGenderLabel(genderValue: number): string {
+    return genderValue === 1 ? 'Male' : 'Female';
+  }
+
+  get isUnavailable(): boolean {
+    return this.lockerInfo.status === 'Unavailable';
+  }
+
+  toggleExpand(): void {
+    this.isExpanded = !this.isExpanded;
+    if (!this.isExpanded) {
+      this.focusBarcodeInput();
+    }
   }
 
   async scanQRCode(): Promise<void> {
-    let shouldFetchLocker = false; // Flag para malaman kung kailangan pang i-fetch ang locker information
-  
+    if (this.isUnavailable || this.isExpanded) return;
+
+    this.isLoading = true;
+
     try {
       const response: any = await this.lockerApiService.scanQRCode(this.lockerInfo.Id, `StudentNumber:${this.barcodeValue}`).toPromise();
+
       if (response.status === 'Occupied') {
         this.lockerInfo.studentNumber = response.studentNumber;
-        this.lockerInfo.status = response.status; // Update locker status
-        this.lockerInfo.user = response.user; // Update user details
-  
-        this.data.locker = this.lockerInfo; // Update data.locker with updated lockerInfo
-  
-        // Clear barcodeValue after successful scan
-        this.barcodeValue = '';
-  
-        // Set flag to true if locker information needs to be fetched
-        shouldFetchLocker = true;
-  
-        // Show SweetAlert for success with locker number and auto-close after 2 seconds
+        this.lockerInfo.status = response.status;
+        this.lockerInfo.user = response.user;
+        this.data.locker = this.lockerInfo;
+
         Swal.fire({
           icon: 'success',
           title: 'Success!',
-          text: `Locker scanned successfully! Locker Number: ${this.lockerInfo.lockerNumber}`,
-          timer: 2000, // Auto-close after 2 seconds
-          showConfirmButton: false, // Hide the "OK" button
+          text: `Locker scanned successfully! Locker Number: ${this.lockerInfo.locker_number}`,
+          timer: 2000,
+          showConfirmButton: false,
+        });
+      } else if (response.status === 'Available') {
+        this.lockerInfo.studentNumber = '';
+        this.lockerInfo.status = response.status;
+        this.lockerInfo.user = null;
+        this.data.locker = this.lockerInfo;
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Success!',
+          text: 'Logged out successfully!',
+          timer: 2000,
+          showConfirmButton: false,
         });
       } else {
-        console.log('Locker already scanned.');
+        Swal.fire({
+          icon: 'info',
+          title: 'Info',
+          text: 'Locker already scanned.',
+          timer: 2000,
+          showConfirmButton: false,
+        });
       }
-    } catch (error) {
+
+      this.barcodeValue = '';
+      this.fetchLockerInformation();
+    } catch (error: any) {
       console.error('Error scanning QR code:', error);
-  
-      // Show SweetAlert for error and auto-close after 2 seconds
+
+      let errorMessage = 'Failed to scan locker.';
+      if (error?.status === 400 && error?.error?.error === 'User is already occupying another locker') {
+        errorMessage = `You are currently occupying locker ${error.error.occupiedLocker}.`;
+      } else if (error?.status === 400 && error?.error?.error === 'StudentNumber doesn\'t match for this locker') {
+        errorMessage = 'StudentNumber doesn\'t match.';
+      } else if (error?.error?.message) {
+        errorMessage = error.error.message;
+      }
+
       Swal.fire({
         icon: 'error',
         title: 'Error!',
-        text: 'Student number doesn\'t match!',
-        timer: 2000, // Auto-close after 2 seconds
-        showConfirmButton: false, // Hide the "OK" button
+        text: errorMessage,
+        timer: 2000,
+        showConfirmButton: false,
       });
-    }
-  
-    // Check if locker information needs to be fetched and fetch it if necessary
-    if (shouldFetchLocker) {
-      this.fetchLockerInformation();
+    } finally {
+      this.isLoading = false;
     }
   }
-  
+
   fetchLockerInformation(): void {
-    this.lockerApiService.getLockerDetails(this.lockerInfo.Id)
-      .subscribe((response: any) => {
+    this.lockerApiService.getLockerDetails(this.lockerInfo.Id).subscribe(
+      (response: any) => {
         if (response.status === 'Occupied') {
           this.lockerInfo.studentNumber = response.studentNumber;
-          this.lockerInfo.status = response.status; // Update locker status
-          this.lockerInfo.user = response.user; // Update user details
-  
-          this.data.locker = this.lockerInfo; 
-  
-          this.barcodeValue = '';
-  
-          this.fetchLockerInformation();
+          this.lockerInfo.status = response.status;
+          this.lockerInfo.user = response.user;
         } else {
           this.lockerInfo.studentNumber = '';
-          this.lockerInfo.status = response.status; 
+          this.lockerInfo.status = response.status;
           this.lockerInfo.user = null;
         }
-      }, (error: any) => {
-        console.error('Error scanning QR code:', error);
-      });
+        this.data.locker = this.lockerInfo;
+      },
+      (error: any) => {
+        console.error('Error fetching locker information:', error);
+      }
+    );
   }
-  
 
   onBarcodeValueChange(newValue: string): void {
     clearTimeout(this.typingTimer);
@@ -137,43 +238,40 @@ toggleExpand(): void {
       if (newValue) {
         this.scanQRCode();
       }
-    }, 500);
+    }, 100);
   }
 
   onClose(): void {
-    this.data.locker = this.lockerInfo; 
-
-    this.ngOnInit(); 
+    this.data.locker = this.lockerInfo;
+    this.ngOnInit();
   }
 
   manualLogin(): void {
-    const scannedData = `StudentNumber:${this.studentNumber}`; // Use the provided student number for login
-  
+    if (this.isUnavailable) return;
+
+    const scannedData = `StudentNumber:${this.studentNumber}`;
+
     if (this.lockerInfo.status === 'Available') {
       this.lockerApiService.scanQRCode(this.lockerInfo.Id, scannedData).subscribe(
         (response: any) => {
-          // Handle successful login
           Swal.fire({
             icon: 'success',
             title: 'Success!',
             text: 'Locker logged in successfully!',
-            timer: 2000, // Auto-close after 2 seconds
-            showConfirmButton: false
+            timer: 2000,
+            showConfirmButton: false,
           }).then(() => {
-            // Close the popup automatically after 2 seconds
             this.onClose();
           });
-          // Update lockerInfo or perform other necessary actions
         },
         (error: any) => {
-          // Handle error response
           console.error('Error logging in:', error);
           Swal.fire({
             icon: 'error',
             title: 'Error!',
             text: 'Failed to login locker!',
-            timer: 2000, // Auto-close after 2 seconds
-            showConfirmButton: false
+            timer: 2000,
+            showConfirmButton: false,
           });
         }
       );
@@ -185,44 +283,52 @@ toggleExpand(): void {
   }
 
   logoutLocker(): void {
-    const lockerId = this.lockerInfo.Id; // Get the locker ID
-    const scannedData = 'Logout'; // Provide a dummy scannedData for logout
-  
+    if (this.isUnavailable) return;
+
+    const lockerId = this.lockerInfo.Id;
+    const scannedData = 'Logout';
+
     Swal.fire({
       title: 'Confirm Logout',
       text: 'Are you sure you want to logout?',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Yes, logout',
-      cancelButtonText: 'No, cancel'
+      cancelButtonText: 'No, cancel',
     }).then((result) => {
       if (result.isConfirmed) {
         this.lockerApiService.scanQRCode(lockerId, scannedData).subscribe(
           (response: any) => {
-            // Handle successful logout
+            this.lockerInfo.studentNumber = '';
+            this.lockerInfo.status = 'Available';
+            this.lockerInfo.user = null;
+            this.data.locker = this.lockerInfo;
+
             Swal.fire({
               icon: 'success',
               title: 'Success!',
               text: 'Locker logged out successfully!',
-              timer: 2000, // Auto-close after 2 seconds
-              showConfirmButton: false
+              timer: 2000,
+              showConfirmButton: false,
             });
-            // Clear lockerInfo or perform other necessary actions
           },
           (error: any) => {
-            // Handle error response
             console.error('Error logging out:', error);
             Swal.fire({
               icon: 'error',
               title: 'Error!',
               text: 'Failed to logout locker!',
-              timer: 2000, // Auto-close after 2 seconds
-              showConfirmButton: false
+              timer: 2000,
+              showConfirmButton: false,
             });
           }
         );
       }
     });
   }
-  
+
+  private resetLockerInfo(): void {
+    const storedLockerInfo = localStorage.getItem('lockerInfo');
+    this.lockerInfo = storedLockerInfo ? JSON.parse(storedLockerInfo) : this.data.locker;
+  }
 }

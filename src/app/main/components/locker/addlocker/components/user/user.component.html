@@ -1,0 +1,48 @@
+<main>
+  <div class="container">
+    <div class="content">
+      <div class="details-content">
+        <!-- HEADER - TITLE -->
+        <div class="detailsheader">
+          <h1>Add New Locker</h1>
+        </div>
+        <!-- BODY - DETAILS -->
+        <div class="detailsbody">
+          <div class="details">
+            <form>
+              <div class="txt_field">
+                <input class="inputtxt" type="number" name="numLockers" [(ngModel)]="numberOfLockers" required>
+                <span></span>
+                <div class="labelline1">Number of Lockers</div>
+              </div>
+              <div class="txt_field">
+                <input class="inputtxt" type="text" name="lockerNumber" [(ngModel)]="startingLockerNumber" readonly>
+                <span></span>
+                <div class="labelline1">Starting Locker Number</div>
+              </div>
+              <div class="txt_field">
+                <input class="inputtxt" type="text" name="status" [(ngModel)]="status" (change)="onStatusChange()" required>
+                <span></span>
+                <div class="labelline1">Status</div>
+              </div>
+              <div class="txt_field">
+                <input class="inputtxt" type="text" name="remarks" [(ngModel)]="remarks" [readonly]="status === 'Available'">
+                <span></span>
+                <div class="labelline1">Remarks</div>
+              </div>
+              <div class="txt_field1">
+                <div class="labelline1">Date</div>
+                <span></span>
+                <input type="date" class="date" name="date" [(ngModel)]="date" readonly>
+              </div>
+              <div class="button-container">
+                <button type="button" (click)="cancelBox()" class="cancel-btn">Cancel</button>
+                <button type="button" (click)="addBox()" class="update-btn">Add</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>

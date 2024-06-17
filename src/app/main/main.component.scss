@@ -22,6 +22,25 @@
   --danger: #dc3545;
   --light: #f8f9fa;
   --dark: #343a40;
+  --bg-color: #F5EFE6;
+    --container-color: #F4F4F4;
+    --container-hover: #EFEFEF;
+    --main-green: #4F6F52;
+    --green-hover: #446247;
+    --dark-green: #294B37;
+    --darker-green: #264834;
+    --table-border: #BFBFBF;
+    --table-hover: #E9E9E9;
+    --table-darkhover: #B6B6B6;
+    --white: #FFFFFF;
+    --black: #000000;
+    --red: #AB0E0E;
+    --red-hover: #8F0C0C;
+    --cancel-btn: #777777;
+    --cancel-hover: #6B6B6B;
+    --input: #F6F6F6;
+    --input-hover: #ECECEC;
+    --input-border: #44474E;
   --breakpoint-xs: 0;
   --breakpoint-sm: 576px;
   --breakpoint-md: 768px;
@@ -29,6 +48,8 @@
   --breakpoint-xl: 1200px;
   --font-family-sans-serif: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --font-family-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+  
+
 
 *,
 *::before,
@@ -462,6 +483,7 @@ pre {
     visibility: visible;
     margin: 0;
     height: 100%;
+    background-color: #4F6F52;
 }
 
 .sidebar .mat-toolbar {
@@ -492,7 +514,7 @@ body{
 }
 
 .wrapper .sidebar{
-    background: #f0f0f0;
+    background: #4F6F52;
     color: #fff;
     position: fixed;
     top: 0;
@@ -500,7 +522,7 @@ body{
     width: 220px;
     box-shadow: 0px 0px 0px #0000004d !important;
     height: 100%;
-    padding: 20px 0;
+    padding: 45px 0;
     transition: all 0.5s ease;
     z-index: 10;
     visibility: visible;
@@ -513,15 +535,15 @@ body{
 
 .wrapper .sidebar .profile img{
   display: block;
-  width: 150px;
-  height: 150px;
+  width: 140px;
+  height: 140px;
   border-radius: 50%;
   margin: -4px auto;
 }
 
 .wrapper .sidebar .profile h3{
-  font-size: 19px;
-  color: #333;
+  font-size: 18px;
+  color: white;
   margin: 25px 0 5px;
   text-align: center;
     bottom: 10px;
@@ -531,13 +553,14 @@ body{
 .wrapper .sidebar .profile p{
   color: var(--gray);
   font-size: 10px;
-  color: #333;
+  color: #f4f4f4;
   font-family: poppins;
+  opacity: 50%;
 }
 
 .profile-name {
   border-bottom: 1px solid #ccc; /* Add bottom border to the profile name */
-  padding-bottom: 5px; /* Optional: Add some space below the border */
+  padding-bottom: 18px; /* Optional: Add some space below the border */
 }
 
 .item-content {
@@ -555,7 +578,7 @@ body{
 }
 
   .profile-section {
-    background-color: #f0f0f0; /* Example background color for profile section */
+    // background-color: #f0f0f0; /* Example background color for profile section */
     color: #fff; /* Example text color for profile section */
 
   }
@@ -597,15 +620,12 @@ body{
 
 .wrapper .sidebar ul li a{
   display: block;
-  padding: 18px 0 15px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  color: black;
+  padding: 20px 20px 14px;
+  border-bottom: 1px solid #ccc;
+  color: #f4f4f4;
   font-size: 15px;
   position: relative;
-  left: 14px;
   font-family: poppins;
-  width: 190px;
-  font-weight: 500;
 }
 
 .sidebar ul li a {
@@ -625,9 +645,9 @@ body{
 
 .wrapper .sidebar ul li a:hover,
 .wrapper .sidebar ul li a.active{
-    color: #31A463;
-    border-right: 2px solid rgb(54, 205, 115);
-
+    color: #ccc;
+    border-right: 2px solid rgb(50, 210, 120);
+    background-color: #376448;
 }
 
 
@@ -677,7 +697,7 @@ body.active .wrapper .section{
 
 
 .active {
-  background: rgba(0, 0, 0, 0.1);/* Change this to your desired active link background color */
+  background: var(--dark-green);/* Change this to your desired active link background color */
 }
 
 
@@ -716,14 +736,16 @@ body.active .wrapper .section{
   list-style-type: none; /* Remove default bullets */
   padding: 0; /* Remove default padding */
   margin: 0; /* Remove default margin */
+  margin-top: -1rem;
 }
 
 .active .item-content .text {
-  color: #31A463;
+  color: #f4f4f4;
+  font-weight: 500;
 }
 
 .active .item-content mat-icon {
- color: #31A463;
+ color: #f4f4f4;
 }
 
 
@@ -737,7 +759,7 @@ body.active .wrapper .section{
 //newcontent
 
 .mat-toolbar.mat-primary{
-  background-color: #31A463;
+  background-color: var(--dark-green);
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
 }
 
@@ -758,8 +780,8 @@ margin-bottom: 15px;
     justify-content: center;
     align-items: center;
     border-radius: 10px;
-    width: 40px;
-    height: 40px;
+    width: 35px;
+    height: 35px;
     background: rgba(0, 0, 0, 0.4);
     color: #fff;
 }
@@ -791,12 +813,36 @@ margin-bottom: 15px;
     font-size: 0.9rem;
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
   font-weight: lighter;
+  color: var(--bg-color);
   }
-  .datetime mat-icon {
-    margin: 8px -2px -6px;
-  }
+
   .spacer {
     flex: 1; // Allow spacer to take up remaining space
   }
 }
 
+.mat-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .toolbar-title {
+    font-size: 1.7rem; // Adjust the font size as needed
+    font-weight: 500; // Make the text bold
+    color: var(--bg-color); // Change the text color to white or any color you prefer
+    padding-left: 16px; // Add some padding to the left
+  }
+
+  .spacer {
+    flex: 1 1 auto; // Flex-grow to take up available space
+  }
+
+  .datetime {
+    display: flex;
+    align-items: center;
+
+    mat-icon {
+      margin-right: 8px; // Add some space between the icon and the text
+    }
+  }
+}

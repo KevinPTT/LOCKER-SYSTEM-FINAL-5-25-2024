@@ -26,30 +26,23 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   cbaCount: number = 0;
   cahsCount: number = 0;
   ccsCount: number = 0;
-
   chartGenderInstance: Chart<"pie"> | undefined;
   chartDepartmentInstance: Chart<"pie"> | undefined;
-
   activeTab: 'gender' | 'department' = 'gender';
   userCount: any;
   totalUsers: any;
-
-  // totalUsers = 0;
   todayUsers = 0;
   thisWeekUsers = 0;
   thisMonthUsers = 0;
   filterMenuOpen: boolean = false;
   selectedFilter: string = 'all';
   
-  
-
   constructor(private lockerApiService: LockerApiService) {}
 
   toggleFilterMenu() {
     this.filterMenuOpen = !this.filterMenuOpen;
   }
   
-
   ngOnInit(): void {
     this.fetchLockerData();
   }
@@ -68,7 +61,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  
   fetchLockerData() {
     this.lockerApiService.getLockerCounts(this.selectedFilter).subscribe(
       (counts) => {
@@ -99,7 +91,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   loadGenderChart(): void {
-    this.lockerApiService.getGenderCounts().subscribe(
+    this.lockerApiService.getdashboardGenderCounts().subscribe(
       (counts: any) => {
         this.maleCount = counts.maleCount;
         this.femaleCount = counts.femaleCount;
@@ -232,8 +224,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
   
-  
-
   changeTab(tab: 'gender' | 'department'): void {
     this.activeTab = tab;
     if (this.activeTab === 'gender') {
@@ -243,8 +233,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
  
-  
-
   animateCount(
     propertyName:
       | 'availableCount'
@@ -318,10 +306,4 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     }, interval + delayDuration); // Add delay duration to the interval
   }
-  
-  
-  
 }
-  
-  
-

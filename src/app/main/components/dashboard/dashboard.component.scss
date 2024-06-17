@@ -12,6 +12,65 @@
 	--light-yellow: #FFF2C6;
 	--orange: #FD7238;
 	--light-orange: #FFE0D3;
+	--container-color: #F4F4F4;
+    --container-hover: #EFEFEF;
+    --main-green: #4F6F52;
+    --green-hover: #446247;
+    --dark-green: #294B37;
+    --darker-green: #264834;
+    --table-border: #BFBFBF;
+    --table-hover: #E9E9E9;
+    --table-darkhover: #B6B6B6;
+    --white: #FFFFFF;
+    --black: #000000;
+    --red: #AB0E0E;
+    --red-hover: #8F0C0C;
+    --cancel-btn: #777777;
+    --cancel-hover: #6B6B6B;
+    --input: #F6F6F6;
+    --input-hover: #ECECEC;
+    --input-border: #44474E;
+
+	--blue: #007bff;
+	--indigo: #6610f2;
+	--purple: #6f42c1;
+	--pink: #e83e8c;
+	--red: #dc3545;
+	--orange: #fd7e14;
+	--yellow: #ffc107;
+	--green: #28a745;
+	--teal: #20c997;
+	--cyan: #17a2b8;
+	--white: #fff;
+	--gray: #6c757d;
+	--gray-dark: #343a40;
+	--primary: #007bff;
+	--secondary: #6c757d;
+	--success: #28a745;
+	--info: #17a2b8;
+	--warning: #ffc107;
+	--danger: #dc3545;
+	--light: #f8f9fa;
+	--dark: #343a40;
+	--bg-color: #F5EFE6;
+	  --container-color: #F4F4F4;
+	  --container-hover: #EFEFEF;
+	  --main-green: #4F6F52;
+	  --green-hover: #446247;
+	  --dark-green: #294B37;
+	  --darker-green: #264834;
+	  --table-border: #BFBFBF;
+	  --table-hover: #E9E9E9;
+	  --table-darkhover: #B6B6B6;
+	  --white: #FFFFFF;
+	  --black: #000000;
+	  --red: #AB0E0E;
+	  --red-hover: #8F0C0C;
+	  --cancel-btn: #777777;
+	  --cancel-hover: #6B6B6B;
+	  --input: #F6F6F6;
+	  --input-hover: #ECECEC;
+	  --input-border: #44474E;
 }
 
 :host {
@@ -48,7 +107,34 @@ hr {
   opacity: 0.3;
 }
 
+body, html {
+	background-color: var(--bg-color); // Ensure the body and html elements have the background color
+	margin: 0; // Remove default margin
+	padding: 0; // Remove default padding
+  }
+  
+  .container {
+	background-color: var(--bg-color); // Apply background color to main container
+	padding: 0;
+	margin: 0;
+  }
 
+  .additional-content,
+.box-info,
+.table-data {
+  background-color: var(--bg-color); // Apply the same background color
+}
+
+#content {
+	background-color: var(--bg-color); // Set your desired background color variable or value
+	min-height: 100vh; // Ensure the section covers the full height of the viewport
+  }
+  
+  main {
+	background-color: var(--main-bg-color); // Apply the same background color
+	padding: 20px; // Add some padding if needed
+  }
+  
 
 .header-container {
   display: flex;
@@ -253,13 +339,13 @@ hr {
 /* Styles for subtext */
 .subtext {
   font-size: 1.8rem;
-  color: #31A463;
+  color: var(--main-green);
   font-family: var(--poppins), sans-serif; 
   margin-bottom: 24px; 
   font-weight: 600;
   opacity: 1;
   margin-left: 14px;
-  z-index: -1;
+  z-index: 0;
 }
 
 /* Styles for icon */
@@ -282,7 +368,8 @@ hr {
 	padding: 8px 20px;
 	font-family: var(--poppins);
 	// max-height: calc(126vh - 73px);
-	overflow-y: auto;
+	background-color: #F5EFE6;
+	
 }
 #content main .box-info {
 	display: grid;
@@ -299,7 +386,7 @@ hr {
 	align-items: center;
 	grid-gap: 24px;
 	border-left: 4px solid #31A463;
-	box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+	box-shadow: 0 0 10px 1px #c0bbbb;
 	border: .5px solid rgb(49, 164, 99);
 	border-left-width: 8px;
 	border-left-color: #31A463;	
@@ -319,19 +406,19 @@ hr {
 	color: #212529;
 }
 #content main .box-info li:nth-child(2) .bx {
-	background: #dc35458c;
+	background: #28a74582;
 	color: #212529;
 }
 #content main .box-info li:nth-child(3) .bx {
-	background: #343a40ad;
+	background: #28a74582;
 	color: #212529;
 }
 #content main .box-info li:nth-child(4) .bx {
-	background: var(--light-blue);
+	background: #28a74582;
 	color:#212529;
 }
 #content main .box-info li:nth-child(5) .bx {
-	background: var(--light-blue);
+	background: #28a74582;
 	color:#212529;
 }
 #content main .box-info li .text h3 {
@@ -364,7 +451,7 @@ hr {
 	padding: 24px;
 	overflow-x: auto;
 	border-left: 4px solid #31A463;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 10px 1px #c0bbbb;
 }
 #content main .table-data .head {
 	display: flex;
@@ -478,7 +565,7 @@ hr {
 	}
 
 	#content {
-		width: calc(100% - 60px);
+		width: calc(100% - 0px);
 		left: 200px;
 	}
 

@@ -7,7 +7,7 @@ import { Component, Input } from '@angular/core';
 })
 export class SkeletonLoaderComponent {
   @Input() isLoading: boolean = true; // Use @Input to receive the isLoading value from the parent component
-  lockerCount: number = 40;
+  lockerCount: number = 100;
 
   getLockerArray(): number[] {
     return Array.from({ length: this.lockerCount }, (_, index) => index + 1);

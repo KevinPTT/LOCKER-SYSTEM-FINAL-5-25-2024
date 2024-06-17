@@ -12,6 +12,7 @@ import Swal from 'sweetalert2';
 export class LoginComponent implements OnInit {
   loading = false;
   version = 'v1.0.0'; 
+  errorMessage: string | null = null;
 
   // backgroundImageUrl = 'path/to/image.jpg'; // Add the background image URL here
   loginForm = new FormGroup({
@@ -19,7 +20,9 @@ export class LoginComponent implements OnInit {
     password: new FormControl(''),
   });
 
-  constructor(private auth: AuthService, private router: Router) {}
+  constructor(private auth: AuthService, private router: Router) {
+    
+  }
 
   ngOnInit(): void {
     if (this.auth.isLoggedIn()) {
@@ -28,10 +31,13 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
-    this.loading = true; // Set loading to true when login button is clicked
+    if (this.loginForm.valid) {
+      const email = this.loginForm.get('email')?.value as string;
+      const password = this.loginForm.get('password')?.value as string;
 
-    // Simulate login or call login service
-    this.auth.login(this.loginForm.value).subscribe(
+      if (email && password) {
+        this.loading = true;
+        this.auth.login({ email, password }).subscribe(
       (result) => {
         // Login successful logic
         this.loading = false;
@@ -44,6 +50,11 @@ export class LoginComponent implements OnInit {
         this.showLoginErrorToast(err.error.message);
       }
     );
+      } else {
+        // Handle empty email or password fields
+        this.errorMessage = 'Please enter your email and password.';
+      }
+    }
   }
 
   showLoginSuccessToast() {
@@ -81,16 +92,15 @@ export class LoginComponent implements OnInit {
     });
   }
   
-  onSubmit(): void {
+  onSubmit() {
     if (this.loginForm.valid) {
-      // Simulate login with AuthService
-      this.auth.login(this.loginForm.value).subscribe(
-        (result) => {
-          // console.log(result);
-          this.router.navigate(['./main/dashboard']);
+      const loginData: { email: string; password: string } = this.loginForm.value as { email: string; password: string };
+      this.auth.login(loginData).subscribe(
+        response => {
+          this.router.navigate(['dashboard']);
         },
-        (err: Error) => {
-          alert(err.message);
+        error => {
+          this.errorMessage = 'Login failed. Please check your credentials and try again.';
         }
       );
     }

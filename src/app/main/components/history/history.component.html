@@ -1,109 +1,124 @@
-<section id="content">
-  <main>
-    <div class="head-title">
-      <h1><span class="dashboard-line">HISTORY</span></h1>
-    </div>
-    <h1 class="subtext">HISTORY <i class='bx bxs-calendar'></i></h1>
-    <!-- Additional content within the main section -->
-    <div class="additional-content">
-    </div>
-  </main>
-  <hr>
-  <main class="table" id="customers_table">
-    <section class="table__header">
-      <div class="input-group">
-        <input type="search" placeholder="Search Data..." [(ngModel)]="searchQuery" (input)="applySearch()">
+  <section id="content">
+    <main>
+      <div class="head-title">
+        <h1><span class="dashboard-line">HISTORY</span></h1>
       </div>
-      <button mat-button [matMenuTriggerFor]="filterMenu" class="filter-button">
-        <mat-icon>filter_list</mat-icon>
-        Filter: {{ activeFilter }}
-      </button>
-      <mat-menu #filterMenu="matMenu">
-        <button mat-menu-item (click)="applyFilter('all')">All</button>
-        <button mat-menu-item (click)="applyFilter('today')">Today</button>
-        <button mat-menu-item (click)="applyFilter('week')">This Week</button>
-        <button mat-menu-item (click)="applyFilter('month')">This Month</button>
-      </mat-menu>
-      
-        <div class="export__file">
-          <button mat-icon-button [matMenuTriggerFor]="exportMenu" class="export__file-btn" title="Export File">
-            <mat-icon>cloud_download</mat-icon>
-          </button>
-          <mat-menu #exportMenu="matMenu">
-            <button mat-menu-item (click)="downloadFile('PDF')">
-              <mat-icon>picture_as_pdf</mat-icon> Download PDF
+      <h1 class="subtext">HISTORY <i class='bx bxs-calendar'></i></h1>
+      <!-- Additional content within the main section -->
+      <div class="additional-content">
+      </div>
+    <hr>
+    <main class="table" id="customers_table">
+      <div class="loading-container" *ngIf="isLoading; else content">
+        <mat-progress-spinner mode="indeterminate" class="custom-spinner"></mat-progress-spinner>
+        <!-- Loading spinner or message -->
+      </div>
+      <ng-template #content>
+        <section class="table__header">
+          <div class="input-group">
+            <input type="search" placeholder="Search Data..." [(ngModel)]="searchQuery" (input)="applySearch()">
+          </div>
+          <div class="export__file">
+            <button mat-icon-button [matMenuTriggerFor]="exportMenu" class="export__file-btn" title="Export File">
+              <mat-icon>print</mat-icon>
             </button>
-            <button mat-menu-item (click)="downloadFile('CSV')">
-              <mat-icon>insert_drive_file</mat-icon> Download CSV
-            </button>
-            <button mat-menu-item (click)="downloadFile('Excel')">
-              <mat-icon>insert_chart</mat-icon> Download EXCEL
-            </button>
-          </mat-menu>
-        </div>
-    </section>
-    <div class="loading-container" *ngIf="isLoading; else content">
-      <mat-progress-spinner mode="indeterminate" class="custom-spinner"></mat-progress-spinner>
-      <!-- Loading spinner or message -->
-    </div>
-    <ng-template #content>
-      <div class="table-container">
-        <section class="table__body">
-          <table>
-            <thead>
-              <tr>
-                <th>Locker Number</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Student Number</th>
-                <th>Department</th>
-                <th>Program</th>
-                <th>Gender</th>
-                <th>time & Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              <ul>
-              </ul>
-              <tr *ngFor="let log of filteredLockers | paginate: { itemsPerPage: entriesPerPage, currentPage: currentPage, totalItems: totalItems }; trackBy: trackByFn" (click)="openTimeDetailsDialog(log)">
-                <td>{{ log.locker?.lockerNumber }}</td>
-                <td>{{ log.user?.first_name }}</td>
-                <td>{{ log.user?.last_name }}</td>
-                <td>{{ log.user?.id }}</td>
-                <td>{{ log.user?.program?.department?.department }}</td>
-                <td>{{ log.user?.program?.program }}</td>
-                <td>{{ log.user?.gender }}</td>
-                <td><mat-icon>more_vert</mat-icon></td>
-              </tr>
-            </tbody>
-          </table>
+            <mat-menu #exportMenu="matMenu">
+              <button mat-menu-item [matMenuTriggerFor]="departmentMenu">
+                <mat-icon>picture_as_pdf</mat-icon> Download PDF
+              </button>
+              <button mat-menu-item (click)="downloadFile('CSV')">
+                <mat-icon>insert_drive_file</mat-icon> Download CSV
+              </button>
+              <button mat-menu-item (click)="downloadFile('Excel')">
+                <mat-icon>insert_chart</mat-icon> Download EXCEL
+              </button>
+            </mat-menu>
+            <mat-menu #departmentMenu="matMenu">
+              <button mat-menu-item [disabled]="!isDepartmentAvailable('CEAS')" (click)="downloadFile('PDF', 'CEAS')">CEAS</button>
+              <button mat-menu-item [disabled]="!isDepartmentAvailable('CHTM')" (click)="downloadFile('PDF', 'CHTM')">CHTM</button>
+              <button mat-menu-item [disabled]="!isDepartmentAvailable('CBA')" (click)="downloadFile('PDF', 'CBA')">CBA</button>
+              <button mat-menu-item [disabled]="!isDepartmentAvailable('CAHS')" (click)="downloadFile('PDF', 'CAHS')">CAHS</button>
+              <button mat-menu-item [disabled]="!isDepartmentAvailable('CCS')" (click)="downloadFile('PDF', 'CCS')">CCS</button>
+            </mat-menu>          
+          </div>
         </section>
-        <div class="show-entries">
+        
+        <div class="filter-container">
+          <button mat-button class="filter-button" (click)="toggleDateFilter()">
+            <mat-icon>filter_list</mat-icon>
+            Filter: {{ activeFilter }}
+          </button>
+          <div *ngIf="showDateFilter" class="date-range-filter">
+            <div class="date-field">
+              <label for="fromDate" class="date-label">From:</label>
+              <input type="date" id="fromDate" [(ngModel)]="fromDate" class="date-input" (change)="applyDateFilter()">
+            </div>
+            <div class="date-field">
+              <label for="toDate" class="date-label">To:</label>
+              <input type="date" id="toDate" [(ngModel)]="toDate" class="date-input" (change)="applyDateFilter()">
+            </div>
+            <button mat-button class="clear-button" [disabled]="!fromDate || !toDate" (click)="clearDateFilter()">Clear</button>
+          </div>         
+        </div>   
+        <!-- <div class="show-entries">
           <label for="entries-per-page">Show Entries:</label>
           <select class="form-control" [(ngModel)]="entriesPerPage" (ngModelChange)="changeEntriesPerPage()">
-            <option [value]="10">10</option> <!-- Set the default value to 10 -->
+            <option [value]="10">10</option> 
             <option value="20">20</option>
             <option value="50">50</option>
             <option value="100">100</option>
           </select>
-        </div>
-        <div *ngIf="filteredLockers.length === 0 && !isLoading" class="no-data-message">
-          <div class="no-data-content">
-            <h2>No Data Found</h2>
-            <p>Please check back later or adjust your search criteria.</p>
-          </div>
-        </div>
-        <div class="pagination-container">
-          <div class="page-info">
-            <div class="page-count">
-              Page {{ currentPage }} of {{ getTotalPages() }} | Total Records: {{ totalItems }}
+        </div>      -->
+        <!-- Rest of your table and other content -->
+     
+        <div class="table-container">
+              <section class="table__body">
+            <table>
+              <thead>
+                <tr>
+                  <th>Locker Number</th>
+                  <th>First Name</th>
+                  <th>Last Name</th>
+                  <th>Student Number</th>
+                  <th>Department</th>
+                  <th>Program</th>
+                  <th>Gender</th>
+                  <th>Time & Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let log of filteredLockers | orderBy: ['-created_at'] | paginate: { itemsPerPage: entriesPerPage, currentPage: currentPage, totalItems: totalItems }; trackBy: trackByFn" (click)="openTimeDetailsDialog(log)">
+                  <td>{{ log.locker?.locker_number }}</td>
+                  <td>{{ log.user?.first_name }}</td>
+                  <td>{{ log.user?.last_name }}</td>
+                  <td>{{ log.user?.id }}</td>
+                  <td>{{ log.user?.program?.department_short }}</td>
+                  <td>{{ log.user?.program?.program_short }}</td>
+                  <td>{{ getGenderLabel(log.user?.gender) }}</td>
+                  <td><mat-icon>more_vert</mat-icon></td>
+                </tr>
+              </tbody>              
+            </table>
+          </section>
+          <div *ngIf="filteredLockers.length === 0 && !isLoading" class="no-data-message">
+            <div class="no-data-content">
+              <h2>No Data Found</h2>
+              <p>Please check back later or adjust your search criteria.</p>
             </div>
           </div>
-          <pagination-controls class="pagination-controls" (pageChange)="pageChanged($event)" [maxSize]="5" [directionLinks]="true" [autoHide]="true"></pagination-controls>
+          <div class="pagination-container">
+            <div class="page-info">
+              <div class="page-count">
+                Page {{ currentPage }} of {{ getTotalPages() }} | Total Records: {{ totalItems }}
+              </div>
+            </div> 
+            <pagination-controls (pageChange)="pageChanged($event)" [maxSize]="5" [directionLinks]="true" [autoHide]="true" style="color: green;"></pagination-controls>
+          </div>
         </div>
-
-        
-        </div>
-    </ng-template>
+      </ng-template>
+    </main>
   </main>
-</section>
+
+    <br>
+  </section>
+  

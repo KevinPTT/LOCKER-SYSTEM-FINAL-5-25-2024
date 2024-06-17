@@ -1,6 +1,6 @@
 {
-  "name": "LOCKER",
-  "short_name": "LOCKER",
+  "name": "Locker",
+  "short_name": "GCLIM-LOCKER",
   "theme_color": "#1976d2",
   "background_color": "#fafafa",
   "display": "standalone",

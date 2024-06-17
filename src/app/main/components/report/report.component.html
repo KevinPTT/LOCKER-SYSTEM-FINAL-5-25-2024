@@ -1,4 +1,4 @@
-<section id="content">
+<section id="content" style="background-color: #F5EFE6;">
   <main>
     <div class="head-title">
       <h1>REPORT</h1>
@@ -8,60 +8,96 @@
       <!-- Additional content can be added here -->
     </div>
     <!-- Buttons for Gender and Department using Angular Material -->
-  </main>
   <hr>
   <div class="button-container">
-    <button mat-button (click)="loadGenderChart()" [class.active]="activeTab === 'gender'">Gender</button>
+    <button mat-button (click)="changeTab('gender')" [class.active]="activeTab === 'gender'">Gender</button>
     <button mat-button (click)="loadDepartmentChart()" [class.active]="activeTab === 'department'">Department</button>
   </div>
 
-<!-- Hamburger menu -->
-<div class="parent-container">
-  <div class="menu-container">
-    <button mat-icon-button [matMenuTriggerFor]="menu" class="menu-button">
-      <mat-icon>cloud_download</mat-icon>
-    </button>
-    <span class="download-text">Download</span>
+  <!-- Hamburger menu -->
+  <div class="parent-container">
+    <div class="menu-container">
+      <button mat-icon-button [matMenuTriggerFor]="menu" class="menu-button">
+        <mat-icon>print</mat-icon>
+      </button>
+      <span class="download-text">Export</span>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item [disabled]="isProgramChartVisible" (click)="downloadPDF()">
+          <mat-icon>picture_as_pdf</mat-icon> Download PDF
+        </button>
+        <button mat-menu-item (click)="downloadFile('png')">
+          <mat-icon>image</mat-icon> Download PNG
+        </button>
+        <button mat-menu-item (click)="downloadFile('svg')">
+          <mat-icon>image</mat-icon> Download SVG
+        </button>
+      </mat-menu>
+    </div>
 
-    <mat-menu #menu="matMenu">
-      <button mat-menu-item [disabled]="isProgramChartVisible" (click)="downloadPDF()">
-        <mat-icon>picture_as_pdf</mat-icon> Download PDF
-      </button>
-      <button mat-menu-item (click)="downloadFile('png')">
-        <mat-icon>image</mat-icon> Download PNG
-      </button>
-      <button mat-menu-item (click)="downloadFile('svg')">
-        <mat-icon>image</mat-icon> Download SVG
-      </button>
-    </mat-menu>
+    <!-- Gender filter buttons -->
+    <div *ngIf="activeTab === 'gender'">
+      <div class="filter-container">
+        <button mat-button class="filter-button" (click)="toggleDateFilter()">
+          <mat-icon>filter_list</mat-icon>
+          <span class="filter-text">Filter:</span>
+        </button>
+        <div *ngIf="showDateFilter" class="date-range-filter">
+          <div class="date-field">
+            <label for="fromDate" class="date-label">From:</label>
+            <input type="date" id="fromDate" [(ngModel)]="fromDate" class="date-input" (change)="checkDateInputs()">
+          </div>
+          <div class="date-field">
+            <label for="toDate" class="date-label">To:</label>
+            <input type="date" id="toDate" [(ngModel)]="toDate" class="date-input" (change)="checkDateInputs()">
+          </div>
+          <button mat-button class="clear-button" [disabled]="!fromDate || !toDate"
+            (click)="clearDateFilter()">Clear</button>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="activeTab === 'department'" class="department-filter-container">
+      <!-- Department date filter buttons -->
+      <div class="filter-container">
+        <button mat-button class="filter-button" (click)="toggleDepartmentDateFilter()">
+          <mat-icon>filter_list</mat-icon>
+          <span class="filter-text">Filter:</span>
+        </button>
+        <div *ngIf="showDepartmentDateFilter" class="date-range-filter">
+          <div class="date-field">
+            <label for="departmentFromDate" class="date-label">From:</label>
+            <input type="date" id="departmentFromDate" [(ngModel)]="departmentFromDate" class="date-input" (change)="checkDepartmentDateInputs()">
+          </div>
+          <div class="date-field">
+            <label for="departmentToDate" class="date-label">To:</label>
+            <input type="date" id="departmentToDate" [(ngModel)]="departmentToDate" class="date-input" (change)="checkDepartmentDateInputs()">
+          </div>
+          <button mat-button class="clear-button" [disabled]="!departmentFromDate || !departmentToDate" (click)="clearDepartmentDateFilter()">Clear</button>
+        </div>
+      </div>
+    </div>
+    
   </div>
-</div>
 
 
- <div class="hamburger-menu-container" *ngIf="activeTab === 'department'">
-  <div class="menu-container">
-    <button mat-icon-button [matMenuTriggerFor]="departmentMenu" class="menu-button">
-      <mat-icon>menu</mat-icon>
-    </button>
-    <mat-menu #departmentMenu="matMenu">
-      <button mat-menu-item (click)="filterDepartment('CEAS')">CEAS</button>
-      <button mat-menu-item (click)="filterDepartment('CHTM')">CHTM</button>
-      <button mat-menu-item (click)="filterDepartment('CBA')">CBA</button>
-      <button mat-menu-item (click)="filterDepartment('CAHS')">CAHS</button>
-      <button mat-menu-item (click)="filterDepartment('CCS')">CCS</button>
-    </mat-menu>
+
+  
+  <div class="hamburger-menu-container" *ngIf="activeTab === 'department'">
+    <div class="menu-container">
+      <!-- Department filter dropdown menu -->
+      <button mat-icon-button [matMenuTriggerFor]="departmentMenu" class="menu-button">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <mat-menu #departmentMenu="matMenu">
+        <button mat-menu-item (click)="filterDepartment('CEAS')">CEAS</button>
+        <button mat-menu-item (click)="filterDepartment('CHTM')">CHTM</button>
+        <button mat-menu-item (click)="filterDepartment('CBA')">CBA</button>
+        <button mat-menu-item (click)="filterDepartment('CAHS')">CAHS</button>
+        <button mat-menu-item (click)="filterDepartment('CCS')">CCS</button>
+      </mat-menu>
+    </div>
   </div>
-</div>
-
-<!-- <div>
-  <select [(ngModel)]="filterBy" (change)="onFilterChange()">
-    <option value="today">Today</option>
-    <option value="weeks">Weeks</option>
-    <option value="month">Month</option>
-  </select>
-</div> -->
-
-
+  
 
   <!-- Graphs Section -->
   <div class="chartsBx">
@@ -71,7 +107,11 @@
     <div class="chart">
       <canvas #chart2 class="chart-canvas"></canvas>
     </div>
-    <!-- <canvas id="ceas-programs-chart"></canvas> -->
-
   </div>
+
+  <!-- Add loading spinner -->
+  <div *ngIf="isLoading" class="loading-spinner" style="color: green;">
+    <mat-spinner [color]="'accent'"></mat-spinner> <!-- Set spinner color to accent (green) -->
+  </div>
+</main>
 </section>

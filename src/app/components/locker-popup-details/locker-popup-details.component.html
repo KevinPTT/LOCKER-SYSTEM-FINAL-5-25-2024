@@ -1,30 +1,38 @@
 <div class="record">
-  <h2 mat-dialog-title>LOCKER INFORMATION</h2>
+  <h2 mat-dialog-title class="title-container">
+    LOCKER INFORMATION
+    <!-- <button mat-icon-button class="custom-icon-button" [matMenuTriggerFor]="menu" tabindex="-1">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu">
+      <button mat-menu-item (click)="remark()">Remark for lost item</button>
+    </mat-menu> -->
+  </h2>
   <table class="table">
     <tr>
       <th>Locker Number</th>
-      <td>{{ lockerInfo.lockerNumber }}</td>
+      <td>{{ lockerInfo.locker_number }}</td>
     </tr>
     <tr>
       <th>Name</th>
-      <td>{{ lockerInfo.user? lockerInfo.user.first_name + " " + lockerInfo.user.last_name : '' }}</td>
+      <td>{{ isUnavailable ? 'Unavailable' : (lockerInfo.user ? lockerInfo.user.first_name + " " + lockerInfo.user.last_name : '') }}</td>
     </tr>
     <tr>
       <th>Student ID</th>
-      <td>{{ lockerInfo.user?.id }}</td>
+      <td>{{ isUnavailable ? 'Unavailable' : lockerInfo.user?.id }}</td>
     </tr>
     <tr>
       <th>Program</th>
-      <td>{{ lockerInfo.user?.program?.program }}</td> <!-- Updated to show program name -->
+      <td>{{ isUnavailable ? 'Unavailable' : (lockerInfo.user?.program?.program_short) }}</td>
     </tr>
     <tr>
       <th>Department</th>
-      <td>{{ lockerInfo.user?.program?.department?.department }}</td> <!-- Updated to show department name -->
+      <td>{{ isUnavailable ? 'Unavailable' : (lockerInfo.user?.program?.department_short) }}</td>
     </tr>
-    <tr>
+    
     <tr>
       <th>Gender</th>
-      <td>{{ lockerInfo.user?.gender }}</td>
+      <td>{{ isUnavailable ? 'Unavailable' : (lockerInfo.user ? getGenderLabel(lockerInfo.user.gender) : '') }}</td>
     </tr>
     <tr>
       <th>Status</th>
@@ -32,25 +40,21 @@
     </tr>
   </table>
 
-  <!-- Add a horizontal line separator -->
   <hr class="separator">
 
-  <!-- Add a flex container for the buttons and input -->
   <div class="button-container">
-    <input type="number" [(ngModel)]="barcodeValue" (ngModelChange)="onBarcodeValueChange($event)" class="hidden-input">
-
-    <!-- Add a flex container for the input and buttons -->
+    <input type="number" #barcodeInput [(ngModel)]="barcodeValue" (ngModelChange)="onBarcodeValueChange($event)" [disabled]="isUnavailable || isExpanded" autofocus class="hidden-input" >
     <div class="input-container">
-        <!-- Change the color of the "Expand" button to green -->
-        <button mat-raised-button color="primary" (click)="toggleExpand()">Expand</button>
+      <button mat-raised-button color="primary" (click)="toggleExpand()" [disabled]="isUnavailable">Expand</button>
 
-        <!-- Show the login/logout buttons and input field when the container is expanded -->
-        <div class="button-group" *ngIf="isExpanded">
-            <input type="number" [(ngModel)]="studentNumber" placeholder="Enter Student Number" [disabled]="lockerInfo.user!== null && lockerInfo.user!== undefined" class="input-field" max="999999999">
-            <button mat-raised-button color="warn" [disabled]="lockerInfo.user === null || lockerInfo.user === undefined" (click)="logoutLocker()">Logout</button>
-            <button mat-raised-button color="primary" [disabled]="lockerInfo.user!== null && lockerInfo.user!== undefined" (click)="manualLogin()">Login</button>
-        </div>
+      <div class="button-group" *ngIf="isExpanded">
+        <input type="number" [(ngModel)]="studentNumber" placeholder="Enter Student Number" [disabled]="lockerInfo.user !== null && lockerInfo.user !== undefined || isUnavailable" class="input-field" max="999999999">
+        <button mat-raised-button color="warn" [disabled]="lockerInfo.user === null || lockerInfo.user === undefined || isUnavailable" (click)="logoutLocker()">Logout</button>
+        <button mat-raised-button color="primary" [disabled]="lockerInfo.user !== null && lockerInfo.user !== undefined || isUnavailable" (click)="manualLogin()">Login</button>
+      </div>
     </div>
-</div>
-
+  </div>
+  <div *ngIf="isLoading" class="loading-spinner">
+    <mat-spinner [color]="'accent'"></mat-spinner>
+  </div>
 </div>

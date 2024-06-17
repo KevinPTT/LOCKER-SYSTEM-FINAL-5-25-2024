@@ -1,4 +1,37 @@
 /* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+:root {
+    --bg-color: #F5EFE6;
+    --container-color: #F4F4F4;
+    --container-hover: #EFEFEF;
+    --main-green: #4F6F52;
+    --green-hover: #446247;
+    --dark-green: #294B37;
+    --darker-green: #264834;
+    --table-border: #BFBFBF;
+    --table-hover: #E9E9E9;
+    --table-darkhover: #B6B6B6;
+    --white: #FFFFFF;
+    --black: #000000;
+    --red: #AB0E0E;
+    --red-hover: #8F0C0C;
+    --cancel-btn: #777777;
+    --cancel-hover: #6B6B6B;
+    --input: #F6F6F6;
+    --input-hover: #ECECEC;
+    --input-border: #44474E;
+}
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    list-style-type: none;
+    text-decoration: none;
+}
+
+body {
+    background-color: var(--bg-color);
+    font-family: "Montserrat";
+    transition: all 0.5s ease;
+}

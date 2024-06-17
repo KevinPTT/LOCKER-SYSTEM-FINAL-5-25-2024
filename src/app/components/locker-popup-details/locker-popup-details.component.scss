@@ -116,3 +116,96 @@ $green: #00FF00; // Hexadecimal value for green
 // .locker.unavailable {
 //   background-color: black; 
 // }
+.loading-spinner {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+}
+
+.dropdown-container {
+  position: relative;
+}
+
+.dropdown-button {
+  position: absolute; /* Posisyonin ang button gamit ang absolute position */
+  right: 0;
+  top: 0;
+  border: none;
+  padding: 0;
+  background-color: transparent;
+  box-shadow: none;
+  z-index: 1001; /* Siguraduhing mas mataas ito kaysa sa dropdown menu */
+}
+
+button.mat-icon-button {
+  position: absolute; // para sa gilid
+  top: 0; // para sa tapat sa itaas
+  right: 0; // para sa gilid sa kanan
+  font-size: 12px; // para sa maliit na font size
+  padding: 4px; // para sa konting padding
+  border: none; // para sa walang box
+  background-color: transparent; // para sa walang background color
+  cursor: pointer; // para sa cursor na parang pointer
+}
+
+.dropdown-menu {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.mat-menu {
+  z-index: 1000; /* Tumataas ito depende sa kung gaano kataas ang iyong UI layers */
+}
+
+.mat-dialog-container {
+  z-index: 1000 !important;
+}
+.title-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title-container > span {
+  flex: 1;
+}
+
+.title-container > button {
+  margin-left: auto;
+}
+
+
+.mat-icon-button {
+  background: transparent;
+  border: none;
+  padding: 0;
+  min-width: 0;
+}
+
+.mat-icon-button.mat-icon {
+  color: #333; /* adjust the color to your liking */
+}
+
+.custom-icon-button {
+  background: transparent;
+  border: none;
+  padding: 0;
+  min-width: 0;
+}
+
+.custom-icon-button.mat-icon {
+  color: #333; /* adjust the color to your liking */
+}
+
+.mat-icon-button:focus {
+  outline: none;
+  box-shadow: none;
+}
+.mat-icon-button {
+  pointer-events: none;
+}
+/* rest of the styles */

@@ -14,6 +14,7 @@ import { Router } from '@angular/router';
 export class MainComponent {
   userName: string | null = '';
   userRole: string | null = '';
+  userPosition: string | null = '';
 
   private breakpointObserver = inject(BreakpointObserver);
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
@@ -29,6 +30,11 @@ export class MainComponent {
   ngOnInit() {
     this.userName = this.auth.getName();
     this.userRole = this.auth.getUserRole();
+    this.userPosition = this.auth.getUserPosition();
+  }
+
+  getUserPosition(): string | null {
+    return this.userPosition;
   }
 
   getName() {
@@ -39,6 +45,7 @@ export class MainComponent {
   getUserRole(): string | null {
     return this.userRole;
   }
+  
 
   getCurrentDateTime(): string {
     const currentDate = new Date();
@@ -59,13 +66,14 @@ export class MainComponent {
       text: 'You will be logged out of the locker system.',
       icon: 'warning',
       showCancelButton: true,
+      confirmButtonColor: '#4F6F52', // Green color
       confirmButtonText: 'Yes, logout',
       cancelButtonText: 'Cancel',
     }).then((result) => {
       if (result.isConfirmed) {
         this.auth.logout();
         this.isLoggedOut = true;
-
+  
         Swal.fire({
           title: 'Logged Out',
           text: 'You have been logged out.',
@@ -81,11 +89,12 @@ export class MainComponent {
           },
           background: '#ffffff',
         });
-
+  
         setTimeout(() => {
           this.router.navigate(['/login']);
         }, 3000);
       }
     });
   }
+  
 }

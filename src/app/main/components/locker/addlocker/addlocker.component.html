@@ -1,0 +1,46 @@
+<section id="content" style="background-color: #F5EFE6; height: 100vh; margin-top: -25px; padding: 10px 10px 10px;">
+  <div class="main-content">
+    <div class="sidebar-content">
+      <div class="container-header">
+        <h1>
+          LOCKER
+          <button class="container-AddNewButton" (click)="onAddNewBtnClick()">Add New</button>
+          <button class="container-AddNewButton" (click)="onHistoryBtnClick()">History</button>
+        </h1>
+      </div>
+      <div class="container">
+        <table>
+          <thead>
+            <tr>
+              <th>Locker ID</th>
+              <th>Status</th>
+              <th>Date & Time</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let locker of paginatedLockers()">
+              <td>{{ locker.locker_number }}</td>
+              <td>{{ getStatus(locker) }}</td>
+              <td>{{ locker.updated_at | date:'MM/dd/yyyy' }}</td>
+              <td>
+                <button class="edit-btn" type="button" (click)="onEditBtnClick(locker.id)">
+                  <i class="fa-solid fa-edit" aria-label="Edit"></i>
+                </button>
+                <button class="archive-btn" type="button" (click)="onArchiveBtnClick(locker.id)">
+                  <i class="fa-solid fa-archive" aria-label="Archive"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pagination">
+          <button (click)="previousPage()" [disabled]="currentPage === 1">Previous</button>
+          <span>{{ currentPage }}</span>
+          <button (click)="nextPage()" [disabled]="currentPage === totalPages">Next</button>
+        </div>
+        <br>
+      </div>
+    </div>
+  </div>
+</section>
