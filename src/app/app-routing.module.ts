@@ -12,10 +12,12 @@ const routes: Routes = [
     path: 'main', 
     component: MainComponent,
     canActivate: [AuthGuard],
-    children: [{
-      path: '',
-      loadChildren: ()=>import('./main/main.module').then((m)=>m.MainModule)
-    }]
+    children: [
+      {
+        path: '',
+        loadChildren: () => import('./main/main.module').then((m) => m.MainModule)
+      }
+    ]
   },
   { path: '**', component: NotFoundComponent },
 ];

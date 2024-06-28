@@ -13,38 +13,37 @@
           </div>          
           <ul>
             <li [routerLinkActive]="'active'" [routerLinkActiveOptions]="{ exact: true }">
-              <a routerLink="./dashboard" routerLinkActive="active-link">
+              <a routerLink="/main/dashboard" routerLinkActive="active-link">
                 <div class="item-content">
                   <mat-icon>dashboard</mat-icon>
-                  <span class="text">DASHBOARD</span>
+                  <span class="text">Dashboard</span>
                 </div>
               </a>
             </li>
-            <li [routerLinkActive]="'active'" [routerLinkActiveOptions]="{ exact: true }">
-              <a routerLink="./locker" routerLinkActive="active-link">
+            <li [routerLinkActive]="'active'" [routerLinkActiveOptions]="{ exact: false }">
+              <a routerLink="/main/locker" routerLinkActive="active-link">
                 <div class="item-content">
                   <mat-icon>lock_open</mat-icon>
-                  <span class="text">LOCKERS</span>
+                  <span class="text">Lockers</span>
                 </div>
               </a>
             </li>
             <li [routerLinkActive]="'active'" [routerLinkActiveOptions]="{ exact: true }">
-              <a routerLink="./report" routerLinkActive="active-link">
+              <a routerLink="/main/report" routerLinkActive="active-link">
                 <div class="item-content">
                   <mat-icon>pie_chart</mat-icon>
-                  <span class="text">REPORTS</span>
+                  <span class="text">Reports</span>
                 </div>
               </a>
             </li>
             <li [routerLinkActive]="'active'" [routerLinkActiveOptions]="{ exact: true }">
-              <a routerLink="./history" routerLinkActive="active-link">
+              <a routerLink="/main/history" routerLinkActive="active-link">
                 <div class="item-content">
                   <mat-icon>history</mat-icon>
-                  <span class="text">HISTORY</span>
+                  <span class="text">History</span>
                 </div>
               </a>
             </li>
-            <!-- Conditionally display the logout button based on screen size -->
             <div class="logout-icon-container">
               <button mat-icon-button (click)="logout()">
                 <mat-icon>logout</mat-icon>
@@ -58,7 +57,6 @@
 
   <mat-sidenav-content>
     <mat-toolbar color="primary">
-      <!-- Conditionally display the toggle button based on screen size -->
       <button *ngIf="(isHandset$ | async)" type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()" class="toggle-button">
         <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
       </button>
